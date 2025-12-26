@@ -9,7 +9,7 @@
     <script src="query_reader.js"></script>
     <div id="qr"></div>
     <script type="module">
-      import init, { create_qr } from './pkg/qr_creator.js';
+      import init, { create_qr } from './qr_creator/pkg/qr_creator.js';
 
       async function run() {
         await init(); // loads WASM
