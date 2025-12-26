@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample HTML Page</title>
+    <title>QR Platba</title>
 </head>
 <body>
-    <script src="query_reader.js"></script>
-    <div id="qr"></div>
-    <script type="module">
-      import init, { create_qr } from './qr_creator/pkg/qr_creator.js';
 
-      async function run() {
-        await init(); // loads WASM
-        const iban = "CZ6508000000192000145399";
-        const svg = create_qr(iban, "1500.00", "Invoice 123");
-        document.getElementById("qr").innerHTML = svg;
-      }
-
-      run();
-    </script>
     <h1>Vítejte na mé webové stránce</h1>
     <p>Toto je ukázková HTML stránka.</p>
+
+    <div id="qr"></div>
+
+    <input type="text" id="amount" placeholder="Částka (např. 1500.00)"><br><br>
+    <input type="text" id="message" placeholder="Zpráva (např. Faktura 123)"><br><br>
+
+    <button id="generate">Generate QR Code</button>
+
+    <script type="module" src="query_reader.js"></script>
+
 </body>
 </html>
