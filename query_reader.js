@@ -8,15 +8,13 @@ async function run() {
     const message = document.getElementById('message').value;
 
     if (!iban) {
-        alert("IBAN chybí v URL (?iban=...)");
+        alert("Chybí IBAN v URL (?iban=...)");
         return;
     }
 
-    await init(); // loads WASM
-
+    await init();
     const svg = create_qr(iban, amount, message);
     document.getElementById("qr").innerHTML = svg;
 }
 
-// Attach event listener instead of inline onclick
 document.getElementById('generate').addEventListener('click', run);

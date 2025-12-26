@@ -3,21 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Platba</title>
+    <title>QR Platba Generator</title>
+
+    <!-- Modern font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
 </head>
 <body>
 
-    <h1>Vítejte na mé webové stránce</h1>
-    <p>Toto je ukázková HTML stránka.</p>
+    <div class="card">
+        <h1>QR Platba</h1>
+        <p>Vygenerujte bankovní QR kód pro platbu</p>
 
-    <div id="qr"></div>
+        <label for="amount">Částka (CZK)</label>
+        <input type="text" id="amount" placeholder="např. 1500.00">
 
-    <input type="text" id="amount" placeholder="Částka (např. 1500.00)"><br><br>
-    <input type="text" id="message" placeholder="Zpráva (např. Faktura 123)"><br><br>
+        <label for="message">Zpráva pro příjemce</label>
+        <input type="text" id="message" placeholder="např. Faktura 123">
 
-    <button id="generate">Generate QR Code</button>
+        <button id="generate">Generovat QR kód</button>
 
+        <div class="qr-container">
+            <div id="qr"></div>
+        </div>
+
+        <div class="footer">
+            SEPA / QR Platba kompatibilní
+        </div>
+    </div>
     <script type="module" src="query_reader.js"></script>
-
 </body>
 </html>
