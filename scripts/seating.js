@@ -5,14 +5,9 @@ const confirmBtn = document.getElementById("confirm");
 const UNIT = 60;
 const MAX_TOTAL_SEATS = 10;
 
-const tables = [
-  { id: "T1", x: 1, y: 1, w: 3, h: 1, seats: 6 },
-  { id: "T2", x: 5, y: 1, w: 3, h: 1, seats: 8 },
-  { id: "T3", x: 1, y: 3, w: 1, h: 3, seats: 4 },
-  { id: "T4", x: 3, y: 3, w: 1, h: 3, seats: 4 },
-  { id: "T5", x: 5, y: 3, w: 1, h: 3, seats: 4 },
-  { id: "T6", x: 7, y: 3, w: 1, h: 3, seats: 4 }
-];
+
+
+const tables = [];
 
 let activeTableEl = null;
 
@@ -37,6 +32,44 @@ function updateTableLabel(el) {
   } else {
     el.classList.remove("checked");
   }
+}
+
+async function fetchSeats() {
+  try {
+    const response = await fetch("http://192.168.50.109:8080/seats");
+
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+    const data = await response.json();
+    console.log("Parsed JSON:", data);
+
+    return data; // return the parsed object
+  } catch (err) {
+    console.error("Fetch failed:", err);
+    return {};
+  }
+}
+
+
+async function init_tables() {
+    const json_tables = await fetchSeats();
+
+    // Convert object values to an array
+    const tableArray = Object.values(json_tables);
+
+    tableArray.forEach(table => {
+        tables.push({
+            id: table.id,
+            x: table.x,
+            y: table.y,
+            w: table.w,
+            h: table.h,
+            seats: table.seats - table.reservedSeats,
+        });
+        console.log(table);
+    });
+
+    console.log("All tables:", tables);
 }
 
 /* =========================
@@ -87,6 +120,11 @@ function activateTable(el) {
     return;
   }
 
+  if (el.dataset.maxSeats === "0") {
+    alert("This table is fully booked.");
+    return;
+  }
+
   // Activate clicked table
   activeTableEl = el;
   el.classList.add("selected");
@@ -127,7 +165,7 @@ amountInput.addEventListener("input", () => {
 /* =========================
    Confirm
 ========================= */
-confirmBtn.addEventListener("click", () => {
+confirmBtn.addEventListener("click", async () => {
   const selectedTables = [...document.querySelectorAll(".table")]
     .filter(el => Number(el.dataset.selectedSeats) > 0);
 
@@ -140,19 +178,30 @@ confirmBtn.addEventListener("click", () => {
 
   console.log("Total seats:", totalSeats);
 
-  selectedTables.forEach(el => {
+  for (const el of selectedTables) {
     console.log(
       el.dataset.id,
       el.dataset.selectedSeats,
       "/",
       el.dataset.maxSeats
     );
+    await fetch(
+      `http://192.168.50.109:8080/reserve_seats?seats=${el.dataset.id}&count=${el.dataset.selectedSeats}`
+    );
+  }
+
+  await init_tables();
+  tables.forEach(table => {
+    room.appendChild(createTable(table));
   });
 });
 
 /* =========================
    Init
 ========================= */
+await init_tables();
+
 tables.forEach(table => {
   room.appendChild(createTable(table));
 });
+
