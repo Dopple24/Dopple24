@@ -7,7 +7,7 @@
 
     <!-- Modern font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/styles.css">
     
 </head>
 <body>
@@ -20,7 +20,7 @@
         <input type="text" id="amount" placeholder="např. 1500.00">
 
         <label for="message">Zpráva pro příjemce</label>
-        <input type="text" id="message" placeholder="např. Faktura 123">
+        <input type="email" id="message" placeholder="email@google.com">
 
         <button id="generate">Generovat QR kód</button>
 
@@ -32,6 +32,6 @@
             SEPA / QR Platba kompatibilní
         </div>
     </div>
-    <script type="module" src="query_reader.js"></script>
+    <script type="module" src="scripts/query_reader.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import init, { create_qr } from './qr_creator/pkg/qr_creator.js';
+import init, { create_qr } from '../qr_creator/pkg/qr_creator.js';
 
 const urlParams = new URLSearchParams(window.location.search);
 const iban = urlParams.get('iban');
