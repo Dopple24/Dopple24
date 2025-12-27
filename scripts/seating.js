@@ -188,6 +188,9 @@ confirmBtn.addEventListener("click", async () => {
     await fetch(
       `http://192.168.50.109:8080/reserve_seats?seats=${el.dataset.id}&count=${el.dataset.selectedSeats}`
     );
+    el.dataset.selectedSeats = 0;
+    el.classList.remove("selected");
+    el.classList.remove("checked");
   }
 
   await init_tables();
