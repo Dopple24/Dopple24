@@ -8,10 +8,9 @@
     <script type="module" src="../scripts/seating.js" defer></script>
 </head>
 <body>
+  <!--<h1>Seating Arrangement</h1>-->
   <div class="app">
-    <h1>Seating Arrangement</h1>
-
-    <div class="card">
+    <div class="card">  
       <div id="room"></div>
 
       <div class="controls">
@@ -22,7 +21,28 @@
         <button id="confirm">Confirm</button>
       </div>
     </div>
+
+      <!-- Shopping Cart Panel -->
+    <div class="cart-card">
+      <h2>Selected Tables</h2>
+      <ul id="cart-list">
+        <!-- Selected tables will appear here dynamically -->
+      </ul>
+    </div>
   </div>
+  <!-- Notification Card -->
+<div id="notification-card" class="notification-card hidden">
+  <div class="notification-header">
+    <span id="notification-title">Success</span>
+    <button id="notification-close">&times;</button>
+  </div>
+  <div id="notification-message" class="notification-message">
+    Your order ID: <strong>12345</strong>
+  </div>
+</div>
+
+
+
 </body>
 
 </html>

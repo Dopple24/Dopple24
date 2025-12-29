@@ -1,38 +1,31 @@
-/* ===== Reset & Base ===== */
-* {
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
 body {
-  margin: 0;
-  background: linear-gradient(135deg, #f5f7fa, #e4e8ee);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: #121212;
 }
 
-/* ===== Layout ===== */
+/* ===== App Layout ===== */
 .app {
-  width: 900px;
-  max-width: 95%;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #2c3e50;
-}
-
-.card {
-  background: white;
-  border-radius: 16px;
+  display: flex; /* side by side */
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start; /* align cards at the top */
   padding: 20px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap; /* responsive on smaller screens */
+  background-color: #121212; /* dark background */
+  color: #e0e0e0; /* default text color */
 }
 
-/* ===== Room ===== */
+/* Make seating card flexible */
+.card {
+  flex: 2; /* larger than cart */
+  min-width: 300px;
+  max-width: 700px;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Room improvements */
 #room {
   position: relative;
   width: 100%;
@@ -41,36 +34,37 @@ h1 {
   background:
     repeating-linear-gradient(
       0deg,
-      #f0f0f0 0,
-      #f0f0f0 1px,
+      #2c2c2c 0,
+      #2c2c2c 1px,
       transparent 1px,
       transparent 60px
     ),
     repeating-linear-gradient(
       90deg,
-      #f0f0f0 0,
-      #f0f0f0 1px,
+      #2c2c2c 0,
+      #2c2c2c 1px,
       transparent 1px,
       transparent 60px
     ),
-    #fafafa;
-  border: 1px solid #e0e0e0;
+    #181818;
+  border: 1px solid #333;
   margin-bottom: 20px;
   overflow: hidden;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
 }
 
 /* ===== Tables ===== */
 .table {
   position: absolute;
   border-radius: 12px;
-  background: linear-gradient(135deg, #dcdcdc, #f3f3f3);
-  border: 1px solid #cfcfcf;
+  background: linear-gradient(135deg, #3a3a3a, #4d4d4d);
+  border: 1px solid #555;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
   font-weight: 600;
-  color: #444;
+  color: #e0e0e0;
   cursor: pointer;
   user-select: none;
   transition: 
@@ -81,28 +75,29 @@ h1 {
 
 .table:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 15px rgba(255, 255, 255, 0.1);
 }
 
 .table.checked {
-  background: linear-gradient(135deg, #f6ff71, #c8ff00);
-  color: black;
+  background: linear-gradient(135deg, #c8ff00, #f6ff71);
+  color: #000;
   box-shadow: 0 8px 20px rgba(76, 175, 80, 0.45);
 }
 
 .table.selected {
-  background: linear-gradient(135deg, #4caf50, #66bb6a);
-  color: white;
+  background: linear-gradient(135deg, #66bb6a, #4caf50);
+  color: #fff;
   box-shadow: 0 8px 20px rgba(76, 175, 80, 0.45);
 }
 
-/* ===== Controls ===== */
+/* Controls styling */
 .controls {
   display: flex;
   gap: 20px;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
+  margin-top: 10px;
 }
 
 .controls label {
@@ -110,30 +105,167 @@ h1 {
   align-items: center;
   gap: 10px;
   font-weight: 500;
-  color: #555;
+  color: #ccc;
 }
 
 input[type="range"] {
   width: 200px;
 }
 
+/* Buttons styling */
 button {
-  background: linear-gradient(135deg, #2196f3, #42a5f5);
+  background: linear-gradient(135deg, #1e88e5, #42a5f5);
   border: none;
-  border-radius: 10px;
-  padding: 12px 20px;
+  border-radius: 12px;
+  padding: 12px 24px;
   color: white;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(33, 150, 243, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.5);
 }
 
 button:active {
   transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+/* ===== Cart Panel ===== */
+.cart-card {
+  flex: 1;
+  min-width: 220px;
+  max-width: 280px;
+  background: #1e1e1e;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.cart-card h2 {
+  margin-top: 0;
+  text-align: center;
+  color: #e0e0e0;
+  margin-bottom: 15px;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 8px;
+}
+
+/* Cart list improvements */
+#cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+#cart-list li {
+  background: #2a2a2a;
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+#cart-list li:hover {
+  background: #3a3a3a;
+}
+
+#cart-list li span.remove {
+  cursor: pointer;
+  color: #e74c3c;
+  font-weight: 700;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+#cart-list li span.remove:hover {
+  color: #ff5252;
+}
+
+/* ===== Notification Card ===== */
+.notification-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 320px;
+  max-width: 90%;
+  background: #1e1e1e;
+  border-radius: 16px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  text-align: center;
+  font-family: system-ui, sans-serif;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.notification-card.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.notification-header span {
+  font-weight: 700;
+  font-size: 18px;
+  color: #e0e0e0;
+}
+
+.notification-header button {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #ccc;
+  line-height: 1;
+}
+
+.notification-message {
+  font-size: 15px;
+  color: #ccc;
+}
+
+.notification-card.success {
+  border-left: 6px solid #4caf50;
+}
+
+.notification-card.error {
+  border-left: 6px solid #f44336;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .app {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card, .cart-card {
+    max-width: 95%;
+  }
 }

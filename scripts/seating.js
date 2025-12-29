@@ -1,11 +1,12 @@
 const room = document.getElementById("room");
 const amountInput = document.getElementById("amount");
 const confirmBtn = document.getElementById("confirm");
+const cartList = document.getElementById("cart-list");
+const closePopUp = document.getElementById("notification-close");
+const card = document.getElementById("notification-card");
 
 const UNIT = 60;
 const MAX_TOTAL_SEATS = 10;
-
-
 
 const tables = [];
 
@@ -32,6 +33,8 @@ function updateTableLabel(el) {
   } else {
     el.classList.remove("checked");
   }
+
+  renderCart();
 }
 
 async function fetchSeats() {
@@ -41,8 +44,6 @@ async function fetchSeats() {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const data = await response.json();
-    console.log("Parsed JSON:", data);
-
     return data; // return the parsed object
   } catch (err) {
     console.error("Fetch failed:", err);
@@ -66,10 +67,7 @@ async function init_tables() {
             h: table.h,
             seats: table.seats - table.reservedSeats,
         });
-        console.log(table);
     });
-
-    console.log("All tables:", tables);
 }
 
 /* =========================
@@ -93,6 +91,46 @@ function createTable(table) {
   el.addEventListener("click", () => activateTable(el));
 
   return el;
+}
+
+/* =========================
+    Cart logic
+========================= */
+function renderCart() {
+  
+  // Get all table elements in the DOM
+  const tableEls = document.querySelectorAll(".table");
+
+  // Filter only tables with selected seats
+  const selectedTables = [...tableEls].filter(
+    el => Number(el.dataset.selectedSeats) > 0
+  );
+
+  // Clear current cart
+  cartList.innerHTML = "";
+
+  // If nothing selected
+  if (Object.keys(selectedTables).length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "No tables selected";
+    li.style.textAlign = "center";
+    li.style.fontStyle = "italic";
+    li.style.color = "#888";
+    cartList.appendChild(li);
+    return;
+  }
+
+  // Add selected tables
+  for (let table of selectedTables) {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      Table <strong>${table.dataset.id}</strong> 
+      <span>${table.dataset.selectedSeats} seat${table.dataset.selectedSeats == 1 ? " " : "s"}</span>
+    `;
+
+    cartList.appendChild(li);
+  }
 }
 
 /* =========================
@@ -140,8 +178,6 @@ function activateTable(el) {
   }
 }
 
-
-
 /* =========================
    Seat amount handling
 ========================= */
@@ -162,6 +198,19 @@ amountInput.addEventListener("input", () => {
   updateTableLabel(activeTableEl);
 });
 
+function showNotificationCard(title, message, type = "success") {
+  const titleEl = document.getElementById("notification-title");
+  const messageEl = document.getElementById("notification-message");
+
+  card.className = `notification-card show ${type}`;
+  titleEl.textContent = title;
+  messageEl.innerHTML = message;
+}
+
+closePopUp.addEventListener("click", () => {
+  card.className = `notification-card hidden`;
+})
+
 /* =========================
    Confirm
 ========================= */
@@ -176,18 +225,34 @@ confirmBtn.addEventListener("click", async () => {
     return;
   }
 
-  console.log("Total seats:", totalSeats);
-
   for (const el of selectedTables) {
-    console.log(
-      el.dataset.id,
-      el.dataset.selectedSeats,
-      "/",
-      el.dataset.maxSeats
-    );
-    await fetch(
-      `http://192.168.50.109:8080/reserve_seats?seats=${el.dataset.id}&count=${el.dataset.selectedSeats}`
-    );
+    const orderID = await fetch(
+      `http://192.168.50.109:8080/reserve_seats?${el.dataset.id}=${el.dataset.selectedSeats}`
+      ).then(response => {
+        switch (response.status) {
+          case 200:
+            console.log("Success!");
+            return response.text(); // or .text(), depending on your response type
+          case 400:
+            console.error("Bad request: Table not found");
+            break;
+          case 500:
+            console.error("Internal server error");
+            break;
+          default:
+            console.warn("Unexpected status:", response.status);
+        }
+      })
+      .catch(error => {
+        console.error("Network or fetch error:", error);
+      });
+
+    const order = { id: orderID};
+    localStorage.setItem('order', JSON.stringify(order));
+    const savedOrder = JSON.parse(localStorage.getItem('order'));
+    console.log(savedOrder.id);  // will print the orderID
+    showNotificationCard("Success", "Your order ID: <strong>" + orderID + "</strong>", "success");
+
     el.dataset.selectedSeats = 0;
     el.classList.remove("selected");
     el.classList.remove("checked");
@@ -198,6 +263,8 @@ confirmBtn.addEventListener("click", async () => {
     room.appendChild(createTable(table));
   });
 });
+
+
 
 /* =========================
    Init
