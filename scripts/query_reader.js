@@ -34,7 +34,7 @@ async function initPage() {
 }
 
 async function run() {
-    const amount = document.getElementById('amount').value;
+    const amount = Number(document.getElementById('amount').value);
     const message = document.getElementById('message').value;
 
     if (!iban) {
