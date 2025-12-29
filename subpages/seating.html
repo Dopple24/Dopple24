@@ -1,48 +1,49 @@
 <!DOCTYPE html>
 <html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seating Arrangement</title>
-    <link rel="stylesheet" href="../styles/seating.css">
-    <script type="module" src="../scripts/seating.js" defer></script>
-</head>
-<body>
-  <!--<h1>Seating Arrangement</h1>-->
-  <div class="app">
-    <div class="card">  
-      <div id="room"></div>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Seating Arrangement</title>
+      <link rel="stylesheet" href="../styles/seating.css">
+      <script type="module" src="../scripts/seating.js" defer></script>
+  </head>
+  <body>
+    <!--<h1>Seating Arrangement</h1>-->
+    <div class="app">
+      <div class="card">  
+        <div id="room"></div>
 
-      <div class="controls">
-        <label>
-          Seats:
-          <input type="range" id="amount" min="1" max="1" value="1">
-        </label>
-        <button id="confirm">Confirm</button>
+        <div class="controls">
+          <label>
+            Seats:
+            <input type="range" id="amount" min="1" max="1" value="1">
+          </label>
+          <button id="confirm">Objednat</button>
+        </div>
+      </div>
+
+        <!-- Shopping Cart Panel -->
+      <div class="cart-card">
+        <h2>Selected Tables</h2>
+        <ul id="cart-list">
+          <!-- Selected tables will appear here dynamically -->
+        </ul>
+        <div class="cart-total">
+          <span>Total</span>
+          <strong id="cart-total">0,00 Kč</strong>
+        </div>
       </div>
     </div>
-
-      <!-- Shopping Cart Panel -->
-    <div class="cart-card">
-      <h2>Selected Tables</h2>
-      <ul id="cart-list">
-        <!-- Selected tables will appear here dynamically -->
-      </ul>
+    <!-- Notification Card -->
+    <div id="notification-card" class="notification-card hidden">
+      <div class="notification-header">
+        <span id="notification-title">Success</span>
+        <button id="notification-close">&times;</button>
+        <button id="pay">Pay</button>
+        </div>
+      <div id="notification-message" class="notification-message">
+        Your order ID: <strong>12345</strong>
+      </div>
     </div>
-  </div>
-  <!-- Notification Card -->
-<div id="notification-card" class="notification-card hidden">
-  <div class="notification-header">
-    <span id="notification-title">Success</span>
-    <button id="notification-close">&times;</button>
-  </div>
-  <div id="notification-message" class="notification-message">
-    Your order ID: <strong>12345</strong>
-  </div>
-</div>
-
-
-
-</body>
-
+  </body>
 </html>

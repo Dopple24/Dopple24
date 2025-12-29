@@ -197,6 +197,51 @@ button:active {
   color: #ff5252;
 }
 
+.cart-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cart-item-left strong {
+  font-size: 14px;
+  color: #f1f1f1;
+}
+
+.cart-item-left small {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.cart-item-right {
+  display: flex;
+  align-items: center;
+}
+
+.cart-price {
+  font-weight: 700;
+  color: #4caf50;
+  font-size: 14px;
+}
+
+/* Total row */
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #333;
+  padding-top: 12px;
+  margin-top: 10px;
+  font-size: 16px;
+  color: #f1f1f1;
+}
+
+.cart-total strong {
+  font-size: 18px;
+  color: #4caf50;
+}
+
+
 /* ===== Notification Card ===== */
 .notification-card {
   position: fixed;

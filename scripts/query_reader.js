@@ -2,7 +2,36 @@ import init, { create_qr } from '../qr_creator/pkg/qr_creator.js';
 
 const urlParams = new URLSearchParams(window.location.search);
 const iban = urlParams.get('iban');
-const order_id = urlParams.get('order_id')
+const order_id = urlParams.get('order_id');
+
+async function fetchPrice(order_id) {
+    try {
+        const response = await fetch(`http://192.168.50.109:8080/get_price?id=${order_id}`);
+        if (response.status === 200) {
+            const text = await response.text();
+            console.log("Fetched price:", text);
+            return Number(text) || 0; // fallback if conversion fails
+        } else {
+            console.warn("Price request failed:", response.status);
+            return 0;
+        }
+    } catch (err) {
+        console.error("Fetch error:", err);
+        return 0;
+    }
+}
+
+async function initPage() {
+    const amountInput = document.getElementById('amount');
+    const messageInput = document.getElementById('message');
+
+    messageInput.value = order_id;
+
+    const price = await fetchPrice(order_id);
+    amountInput.value = price;
+
+    document.getElementById('generate').addEventListener('click', run);
+}
 
 async function run() {
     const amount = document.getElementById('amount').value;
@@ -18,5 +47,5 @@ async function run() {
     document.getElementById("qr").innerHTML = svg;
 }
 
-document.getElementById('message').value = order_id;
-document.getElementById('generate').addEventListener('click', run);
+// Initialize page
+initPage();

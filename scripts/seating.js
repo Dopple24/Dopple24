@@ -4,6 +4,7 @@ const confirmBtn = document.getElementById("confirm");
 const cartList = document.getElementById("cart-list");
 const closePopUp = document.getElementById("notification-close");
 const card = document.getElementById("notification-card");
+const payBtn = document.getElementById("pay");
 
 const UNIT = 60;
 const MAX_TOTAL_SEATS = 10;
@@ -66,6 +67,7 @@ async function init_tables() {
             w: table.w,
             h: table.h,
             seats: table.seats - table.reservedSeats,
+            price: table.price,
         });
     });
 }
@@ -85,7 +87,9 @@ function createTable(table) {
   el.dataset.id = table.id;
   el.dataset.maxSeats = table.seats;
   el.dataset.selectedSeats = 0;
+  el.dataset.price = table.price;
 
+  console.log(table.price);
   updateTableLabel(el);
 
   el.addEventListener("click", () => activateTable(el));
@@ -109,6 +113,8 @@ function renderCart() {
   // Clear current cart
   cartList.innerHTML = "";
 
+  let cartCost = 0;
+
   // If nothing selected
   if (Object.keys(selectedTables).length === 0) {
     const li = document.createElement("li");
@@ -124,13 +130,26 @@ function renderCart() {
   for (let table of selectedTables) {
     const li = document.createElement("li");
 
+    let price = Number(table.dataset.price);
+    let seats = Number(table.dataset.selectedSeats);
+    let totalPrice = seats * price;
+    cartCost += totalPrice;
+
     li.innerHTML = `
-      Table <strong>${table.dataset.id}</strong> 
-      <span>${table.dataset.selectedSeats} seat${table.dataset.selectedSeats == 1 ? " " : "s"}</span>
+      <div class="cart-item-left">
+        <strong>Table ${table.dataset.id}</strong>
+        <small>${seats} seat${seats === 1 ? "" : "s"} × ${price.toFixed(2)}</small>
+      </div>
+      <div class="cart-item-right">
+        <span class="cart-price">${totalPrice.toFixed(2)} Kč</span>
+      </div>
     `;
 
     cartList.appendChild(li);
   }
+
+  // Update total
+  document.getElementById("cart-total").textContent = `${cartCost.toFixed(2)} Kč`;
 }
 
 /* =========================
@@ -211,6 +230,11 @@ closePopUp.addEventListener("click", () => {
   card.className = `notification-card hidden`;
 })
 
+payBtn.addEventListener("click", () => {
+  const order = JSON.parse(localStorage.getItem("order"));
+  window.location.href = "/subpages/iframe_tester.html?order_id=" + encodeURIComponent(order.id);
+})
+
 /* =========================
    Confirm
 ========================= */
@@ -225,9 +249,16 @@ confirmBtn.addEventListener("click", async () => {
     return;
   }
 
+  let query = ""
   for (const el of selectedTables) {
-    const orderID = await fetch(
-      `http://192.168.50.109:8080/reserve_seats?${el.dataset.id}=${el.dataset.selectedSeats}`
+    query = query + `${el.dataset.id}=${el.dataset.selectedSeats}&`;
+    el.dataset.selectedSeats = 0;
+    el.classList.remove("selected");
+    el.classList.remove("checked");
+  }
+
+  const orderID = await fetch(
+      `http://192.168.50.109:8080/reserve_seats?${query}`
       ).then(response => {
         switch (response.status) {
           case 200:
@@ -247,16 +278,9 @@ confirmBtn.addEventListener("click", async () => {
         console.error("Network or fetch error:", error);
       });
 
-    const order = { id: orderID};
-    localStorage.setItem('order', JSON.stringify(order));
-    const savedOrder = JSON.parse(localStorage.getItem('order'));
-    console.log(savedOrder.id);  // will print the orderID
-    showNotificationCard("Success", "Your order ID: <strong>" + orderID + "</strong>", "success");
-
-    el.dataset.selectedSeats = 0;
-    el.classList.remove("selected");
-    el.classList.remove("checked");
-  }
+  const order = { id: orderID};
+  localStorage.setItem('order', JSON.stringify(order));
+  showNotificationCard("Success", "Your order ID: <strong>" + orderID + "</strong>", "success");
 
   await init_tables();
   tables.forEach(table => {
