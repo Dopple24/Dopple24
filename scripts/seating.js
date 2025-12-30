@@ -1,15 +1,24 @@
 const room = document.getElementById("room");
 const amountInput = document.getElementById("amount");
+const amountDisplay = document.getElementById("amount-current");
+const amountDisplayMax = document.getElementById("amount-max");
 const confirmBtn = document.getElementById("confirm");
 const cartList = document.getElementById("cart-list");
 const closePopUp = document.getElementById("notification-close");
 const card = document.getElementById("notification-card");
 const payBtn = document.getElementById("pay");
+const emailInput = document.getElementById("email-input");
 
-const UNIT = 60;
+let email="";
+let unit = 60;
+let heightUnit = 60;
 const MAX_TOTAL_SEATS = 10;
 
+let roomWidthUnits = 2;
+let roomHeightUnits = 2;
+
 const tables = [];
+const obstacles = [];
 
 let activeTableEl = null;
 
@@ -54,22 +63,50 @@ async function fetchSeats() {
 
 
 async function init_tables() {
-    const json_tables = await fetchSeats();
+  const json = await fetchSeats();
+  const json_tables = json.tables;
 
-    // Convert object values to an array
-    const tableArray = Object.values(json_tables);
+  // Convert object values to an array
+  const tableArray = Object.values(json_tables);
+  const obstacleArray = Object.values(json.obstacles);
 
-    tableArray.forEach(table => {
-        tables.push({
-            id: table.id,
-            x: table.x,
-            y: table.y,
-            w: table.w,
-            h: table.h,
-            seats: table.seats - table.reservedSeats,
-            price: table.price,
-        });
+  tableArray.forEach(table => {
+    if (Number(table.x) + Number(table.w) + 2 > roomWidthUnits) {
+      roomWidthUnits = Number(table.x) + Number(table.w) + 2
+    }
+    if (Number(table.y) + Number(table.h) + 2 > roomHeightUnits) {
+      roomHeightUnits = Number(table.y) + Number(table.h) + 2;
+    }
+    tables.push({
+      id: table.id,
+      x: table.x,
+      y: table.y,
+      w: table.w,
+      h: table.h,
+      seats: table.seats - table.reservedSeats,
+      price: table.price,
     });
+  });
+
+  obstacleArray.forEach(obstacle => {
+    if (Number(obstacle.x) + Number(obstacle.w) + 2 > roomWidthUnits) {
+      roomWidthUnits = Number(obstacle.x) + Number(obstacle.w) + 2
+    }
+    if (Number(obstacle.y) + Number(obstacle.h) + 2 > roomHeightUnits) {
+      roomHeightUnits = Number(obstacle.y) + Number(obstacle.h) + 2;
+    }
+    obstacles.push({
+      id: obstacle.id,
+      x: obstacle.x,
+      y: obstacle.y,
+      w: obstacle.w,
+      h: obstacle.h,
+    });
+  });
+
+  unit = (room.clientWidth || 700) / roomWidthUnits;
+  heightUnit = (room.clientHeight || 420) / roomHeightUnits;
+
 }
 
 /* =========================
@@ -79,10 +116,10 @@ function createTable(table) {
   const el = document.createElement("div");
   el.className = "table";
 
-  el.style.left = table.x * UNIT + "px";
-  el.style.top = table.y * UNIT + "px";
-  el.style.width = table.w * UNIT + "px";
-  el.style.height = table.h * UNIT + "px";
+  el.style.left = table.x * unit + "px";
+  el.style.top = table.y * heightUnit + "px";
+  el.style.width = table.w * unit + "px";
+  el.style.height = table.h * heightUnit + "px";
 
   el.dataset.id = table.id;
   el.dataset.maxSeats = table.seats;
@@ -93,6 +130,22 @@ function createTable(table) {
   updateTableLabel(el);
 
   el.addEventListener("click", () => activateTable(el));
+
+  return el;
+}
+
+function createObstacle(obstacle) {
+  const el = document.createElement("div");
+  el.className = "obstacle";
+
+  el.style.left = obstacle.x * unit + "px";
+  el.style.top = obstacle.y * heightUnit + "px";
+  el.style.width = obstacle.w * unit + "px";
+  el.style.height = obstacle.h * heightUnit + "px";
+
+  el.dataset.id = obstacle.id;
+
+  el.textContent = obstacle.id;
 
   return el;
 }
@@ -156,13 +209,14 @@ function renderCart() {
    Selection logic
 ========================= */
 function activateTable(el) {
+  amountDisplay.textContent = 1;
   // If clicked table is already active, deactivate it
   if (activeTableEl === el) {
     el.classList.remove("selected");
     el.dataset.selectedSeats = 0;
     updateTableLabel(el);
     activeTableEl = null;
-    amountInput.value = "";
+    amountInput.value = 1;
     return;
   }
 
@@ -191,6 +245,9 @@ function activateTable(el) {
   amountInput.max = Math.min(el.dataset.maxSeats, remainingSeats);
   amountInput.value = el.dataset.selectedSeats || 1;
 
+  amountDisplay.textContent = Math.max(el.dataset.selectedSeats || 1, 1);
+  amountDisplayMax.textContent = Math.min(el.dataset.maxSeats, remainingSeats);
+
   if (el.dataset.selectedSeats === "0") {
     el.dataset.selectedSeats = 1;
     updateTableLabel(el);
@@ -201,6 +258,7 @@ function activateTable(el) {
    Seat amount handling
 ========================= */
 amountInput.addEventListener("input", () => {
+  amountDisplay.textContent = amountInput.value || 1;
   if (!activeTableEl) return;
 
   const current = Number(activeTableEl.dataset.selectedSeats);
@@ -216,6 +274,10 @@ amountInput.addEventListener("input", () => {
   activeTableEl.dataset.selectedSeats = next;
   updateTableLabel(activeTableEl);
 });
+
+emailInput.addEventListener("input", () => {
+  email = emailInput.value;
+})
 
 function showNotificationCard(title, message, type = "success") {
   const titleEl = document.getElementById("notification-title");
@@ -249,7 +311,12 @@ confirmBtn.addEventListener("click", async () => {
     return;
   }
 
-  let query = ""
+  if (email === "") {
+    alert("Please enter your email.");
+    return;
+  }
+
+  let query = `email=${email}&`;
   for (const el of selectedTables) {
     query = query + `${el.dataset.id}=${el.dataset.selectedSeats}&`;
     el.dataset.selectedSeats = 0;
@@ -298,4 +365,8 @@ await init_tables();
 tables.forEach(table => {
   room.appendChild(createTable(table));
 });
+
+obstacles.forEach(obstacle => {
+  room.appendChild(createObstacle(obstacle));
+})
 

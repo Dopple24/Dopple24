@@ -43,7 +43,7 @@ async function run() {
     }
 
     await init();
-    const svg = create_qr(iban, amount, message);
+    const svg = create_qr(iban, String(amount), message);
     document.getElementById("qr").innerHTML = svg;
 }
 
