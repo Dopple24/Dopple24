@@ -49,7 +49,7 @@ function updateTableLabel(el) {
 
 async function fetchSeats() {
   try {
-    const response = await fetch("http://192.168.50.109:8080/seats");
+    const response = await fetch("http://192.168.50.67:8080/seats");
 
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
@@ -325,7 +325,7 @@ confirmBtn.addEventListener("click", async () => {
   }
 
   const orderID = await fetch(
-      `http://192.168.50.109:8080/reserve_seats?${query}`
+      `http://192.168.50.67:8080/reserve_seats?${query}`
       ).then(response => {
         switch (response.status) {
           case 200:
