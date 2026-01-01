@@ -4,6 +4,8 @@ const image = document.getElementById("image");
 const numberBox = document.getElementById("number-box");
 const addNumberBtn = document.getElementById("add-number");
 const saveBtn = document.getElementById("save");
+const closeBtn = document.getElementById("close");
+
 
 /*
   Box is stored in NORMALIZED image coordinates (0–1)
@@ -51,7 +53,6 @@ function renderNumberBox() {
   if (!box || !image.complete) return;
 
   const r = image.getBoundingClientRect();
-  console.log(r);
 
   const screenX = r.left + box.x * r.width;
   const screenY = r.top + box.y * r.height;
@@ -152,4 +153,9 @@ saveBtn.addEventListener("click", () => {
 
   console.log("Saved number box (image pixels):");
   console.log(saved);
+});
+
+closeBtn.addEventListener("click", () => {
+  window.location.replace("../index.html");
+
 });

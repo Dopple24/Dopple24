@@ -163,7 +163,10 @@ let should_yell = false;
 
 const app = document.getElementById("app");
 
-function leave() { alert("leave"); }
+function leave() { 
+  window.location.replace("../index.html");
+}
+
 function refresh() { alert("refresh"); }
 function edit_email(index, newEmail) {
   rows[index][2].text = newEmail;
