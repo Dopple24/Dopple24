@@ -6,7 +6,7 @@ const order_id = urlParams.get('order_id');
 
 async function fetchPrice(order_id) {
     try {
-        const response = await fetch(`http://192.168.50.67:8080/get_price?id=${order_id}`);
+        const response = await fetch(`https://127.0.0.1:8080/get_price?id=${order_id}`);
         if (response.status === 200) {
             const text = await response.text();
             console.log("Fetched price:", text);

@@ -37,7 +37,7 @@ export function renderTable(container, { titles, rows, disabled = false, onSelec
       row.forEach(cell => {
         const cellEl = document.createElement("div");
         cellEl.className = "cell";
-        cellEl.textContent = cell.text;
+        cellEl.textContent = cell;
         rowEl.appendChild(cellEl);
       });
 

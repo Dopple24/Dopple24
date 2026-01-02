@@ -14,7 +14,8 @@ background: var(--primary-background);
     padding-right: 15px;
 }
 
-.header-cell, .cell {
+.header-cell {
+  height: 40px;
 flex: 1;
 display: flex;
 align-items: center;
@@ -64,9 +65,16 @@ background: var(--tertiary-background);
 }
 
 .cell {
-height: var(--row-height);
+height: 40px;
+flex: 1;
+display: flex;
+align-items: center;
+justify-content: center;
 cursor: pointer;
 color: var(--contrast-text);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 
 .cell.selected {

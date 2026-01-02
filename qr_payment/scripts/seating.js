@@ -49,7 +49,7 @@ function updateTableLabel(el) {
 
 async function fetchSeats() {
   try {
-    const response = await fetch("http://192.168.50.67:8080/seats");
+    const response = await fetch("https://127.0.0.1:8080/seats");
 
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
@@ -294,7 +294,7 @@ closePopUp.addEventListener("click", () => {
 
 payBtn.addEventListener("click", () => {
   const order = JSON.parse(localStorage.getItem("order"));
-  window.location.href = "/subpages/iframe_tester.html?order_id=" + encodeURIComponent(order.id);
+  window.location.href = "/qr_payment/subpages/iframe_tester.html?order_id=" + encodeURIComponent(order.id);
 })
 
 /* =========================
@@ -325,7 +325,7 @@ confirmBtn.addEventListener("click", async () => {
   }
 
   const orderID = await fetch(
-      `http://192.168.50.67:8080/reserve_seats?${query}`
+      `https://127.0.0.1:8080/reserve_seats?${query}`
       ).then(response => {
         switch (response.status) {
           case 200:

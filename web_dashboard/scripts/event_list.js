@@ -2,14 +2,8 @@ import { renderTable } from "./table.js";
 
 let titles = ["id", "event name", "sold tickets", "event date", "status"];
 let rows = [
-    [
-        { text: "1002", text_color: "white" },
-        { text: "Maturitní ples", text_color: "white" },
-        { text: "1000", text_color: "white" },
-        { text: "2025-02-14", text_color: "white" },
-        { text: "closed", text_color: "lime" },
-    ],
-]
+  ["1002","Maturitní ples","1000","2025-02-14","closed"],
+];
 
 let selected_ticket = [];
 let selected_index = -1;
@@ -19,12 +13,58 @@ let should_yell = false;
 const app = document.getElementById("app");
 
 function leave() { alert("leave"); }
-function refresh() { alert("refresh"); }
+function refresh() { render(); }
 function create_ticket() {
   window.location.replace("./subpages/ticket_creator.html");
 }
 
-function render() {
+async function fetchBlockingJson(url) {
+  try {
+    // This will "pause" until the fetch resolves
+    const response = await fetch(url, {
+        credentials: "include" // send stored cookies
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json(); // or response.text() depending on your API
+    return data;
+  } catch (err) {
+    console.error('Fetch failed:', err);
+    return null;
+  }
+}
+
+function parseTo2DArray(data){
+  if (data && Array.isArray(data)) {
+    return data.map(obj => [
+      obj.id,
+      obj.event_name,
+      obj.sold_tickets,
+      obj.event_date,
+      obj.status,
+    ]);
+  }
+}
+
+async function render() {
+  console.log('Fetching...');
+  const result = await fetchBlockingJson(`https://127.0.0.1:8080/get_events`);
+  if (result) {
+    rows = parseTo2DArray(result);
+    console.log('set', result)
+    renderUI();
+  }
+  else {
+    renderUI();
+    alert("failed to fetch data")
+  }
+
+}
+
+function renderUI() {
   app.innerHTML = "";
 
   const root = document.createElement("div");
@@ -89,9 +129,10 @@ function render() {
   right.appendChild(ticketImg);
 
   const fields = [
-    ["Ticket number:", selected_ticket[0]?.text || ""],
-    ["E-mail:", selected_ticket[2]?.text || ""],
-    ["Bought date:", selected_ticket[3]?.text || ""],
+    ["Event name:", selected_ticket[1] || ""],
+    ["Sold tickets:", selected_ticket[2] || ""],
+    ["Event date:", selected_ticket[3] || ""],
+    ["Status:", selected_ticket[4] || ""]
   ];
 
   fields.forEach(([label, value]) => {
@@ -107,7 +148,7 @@ function render() {
   openBtn.disabled = selected_ticket.length === 0;
   openBtn.onclick = () => {
     console.log(selected_index);
-    window.location.replace("/subpages/ticket_list.html");
+    window.location.replace(`./subpages/ticket_list.html?id=${selected_ticket[0]}`);
   };
 
   right.appendChild(openBtn);
@@ -166,11 +207,12 @@ function updateRightPanel() {
   right.appendChild(ticketImg);
 
   const fields = [
-    ["Ticket number:", selected_ticket[0]?.text || ""],
-    ["E-mail:", selected_ticket[2]?.text || ""],
-    ["Bought date:", selected_ticket[3]?.text || ""],
+    ["Event name:", selected_ticket[1] || ""],
+    ["Sold tickets:", selected_ticket[2] || ""],
+    ["Event date:", selected_ticket[3] || ""],
+    ["Status:", selected_ticket[4] || ""]
   ];
-
+  
   fields.forEach(([label, value]) => {
     const row = document.createElement("div");
     row.style.display = "flex";
@@ -184,7 +226,7 @@ function updateRightPanel() {
   openBtn.disabled = selected_ticket.length === 0;
   openBtn.onclick = () => {
     console.log(selected_index);
-    window.location.replace("./subpages/ticket_list.html");
+    window.location.replace(`./subpages/ticket_list.html?id=${selected_ticket[0]}`)
   };
 
   right.appendChild(openBtn);

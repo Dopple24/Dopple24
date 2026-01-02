@@ -4,157 +4,95 @@ import { showYeller } from "./reassurer.js";
 
 let titles = ["id", "price", "email", "buy date", "status"];
 let rows = [
-  [
-    { text: "1002", text_color: "white" },
-    { text: "$25", text_color: "white" },
-    { text: "b@test.com", text_color: "white" },
-    { text: "2025-02-14", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1003", text_color: "white" },
-    { text: "$40", text_color: "white" },
-    { text: "c@test.com", text_color: "white" },
-    { text: "2025-03-10", text_color: "white" },
-    { text: "invalid", text_color: "red" },
-  ],
-  [
-    { text: "1004", text_color: "white" },
-    { text: "$35", text_color: "white" },
-    { text: "d@test.com", text_color: "white" },
-    { text: "2025-04-01", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1005", text_color: "white" },
-    { text: "$50", text_color: "white" },
-    { text: "e@test.com", text_color: "white" },
-    { text: "2025-05-05", text_color: "white" },
-    { text: "pending", text_color: "yellow" },
-  ],
-  [
-    { text: "1006", text_color: "white" },
-    { text: "$20", text_color: "white" },
-    { text: "f@test.com", text_color: "white" },
-    { text: "2025-06-12", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1007", text_color: "white" },
-    { text: "$45", text_color: "white" },
-    { text: "g@test.com", text_color: "white" },
-    { text: "2025-07-20", text_color: "white" },
-    { text: "invalid", text_color: "red" },
-  ],
-  [
-    { text: "1008", text_color: "white" },
-    { text: "$30", text_color: "white" },
-    { text: "h@test.com", text_color: "white" },
-    { text: "2025-08-15", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1009", text_color: "white" },
-    { text: "$55", text_color: "white" },
-    { text: "i@test.com", text_color: "white" },
-    { text: "2025-09-01", text_color: "white" },
-    { text: "pending", text_color: "yellow" },
-  ],
-  [
-    { text: "1010", text_color: "white" },
-    { text: "$60", text_color: "white" },
-    { text: "j@test.com", text_color: "white" },
-    { text: "2025-10-10", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1011", text_color: "white" },
-    { text: "$15", text_color: "white" },
-    { text: "k@test.com", text_color: "white" },
-    { text: "2025-11-05", text_color: "white" },
-    { text: "invalid", text_color: "red" },
-  ],
-  [
-    { text: "1002", text_color: "white" },
-    { text: "$25", text_color: "white" },
-    { text: "b@test.com", text_color: "white" },
-    { text: "2025-02-14", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1003", text_color: "white" },
-    { text: "$40", text_color: "white" },
-    { text: "c@test.com", text_color: "white" },
-    { text: "2025-03-10", text_color: "white" },
-    { text: "invalid", text_color: "red" },
-  ],
-  [
-    { text: "1004", text_color: "white" },
-    { text: "$35", text_color: "white" },
-    { text: "d@test.com", text_color: "white" },
-    { text: "2025-04-01", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1005", text_color: "white" },
-    { text: "$50", text_color: "white" },
-    { text: "e@test.com", text_color: "white" },
-    { text: "2025-05-05", text_color: "white" },
-    { text: "pending", text_color: "yellow" },
-  ],
-  [
-    { text: "1006", text_color: "white" },
-    { text: "$20", text_color: "white" },
-    { text: "f@test.com", text_color: "white" },
-    { text: "2025-06-12", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1007", text_color: "white" },
-    { text: "$45", text_color: "white" },
-    { text: "g@test.com", text_color: "white" },
-    { text: "2025-07-20", text_color: "white" },
-    { text: "invalid", text_color: "red" },
-  ],
-  [
-    { text: "1008", text_color: "white" },
-    { text: "$30", text_color: "white" },
-    { text: "h@test.com", text_color: "white" },
-    { text: "2025-08-15", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1009", text_color: "white" },
-    { text: "$55", text_color: "white" },
-    { text: "i@test.com", text_color: "white" },
-    { text: "2025-09-01", text_color: "white" },
-    { text: "pending", text_color: "yellow" },
-  ],
-  [
-    { text: "1010", text_color: "white" },
-    { text: "$60", text_color: "white" },
-    { text: "j@test.com", text_color: "white" },
-    { text: "2025-10-10", text_color: "white" },
-    { text: "valid", text_color: "lime" },
-  ],
-  [
-    { text: "1011", text_color: "white" },
-    { text: "$15", text_color: "white" },
-    { text: "k@test.com", text_color: "white" },
-    { text: "2025-11-05", text_color: "white" },
-    { text: "invalid", text_color: "red" },
-  ],
-  [
-    { text: "1011", text_color: "white" },
-    { text: "$15", text_color: "white" },
-    { text: "k@test.com", text_color: "white" },
-    { text: "2025-11-05", text_color: "white" },
-    { text: "invalid", text_color: "red" },
-  ],
+  ["1002", "$25", "b@test.com", "2025-02-14", "OK"],
+  ["1003", "$40", "c@test.com", "2025-03-10", "Error"],
+  ["1004", "$35", "d@test.com", "2025-04-01", "OK"],
+  ["1005", "$50", "e@test.com", "2025-05-05", "Payment Returned"],
+  ["1006", "$20", "f@test.com", "2025-06-12", "OK"],
+  ["1007", "$45", "g@test.com", "2025-07-20", "Error"],
+  ["1008", "$30", "h@test.com", "2025-08-15", "OK"],
+  ["1009", "$55", "i@test.com", "2025-09-01", "Payment Returned"],
+  ["1010", "$60", "j@test.com", "2025-10-10", "OK"],
+  ["1011", "$15", "k@test.com", "2025-11-05", "Error"],
+
+  ["1002", "$25", "b@test.com", "2025-02-14", "OK"],
+  ["1003", "$40", "c@test.com", "2025-03-10", "Error"],
+  ["1004", "$35", "d@test.com", "2025-04-01", "OK"],
+  ["1005", "$50", "e@test.com", "2025-05-05", "Payment Returned"],
+  ["1006", "$20", "f@test.com", "2025-06-12", "OK"],
+  ["1007", "$45", "g@test.com", "2025-07-20", "Error"],
+  ["1008", "$30", "h@test.com", "2025-08-15", "OK"],
+  ["1009", "$55", "i@test.com", "2025-09-01", "Payment Returned"],
+  ["1010", "$60", "j@test.com", "2025-10-10", "OK"],
+  ["1011", "$15", "k@test.com", "2025-11-05", "Error"],
+  ["1011", "$15", "k@test.com", "2025-11-05", "Error"],
 ];
 
+async function fetchBlockingJson(url) {
+  try {
+    // This will "pause" until the fetch resolves
+    const response = await fetch(url, {
+        credentials: "include" // send stored cookies
+    });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
+    const data = await response.json(); // or response.text() depending on your API
+    return data;
+  } catch (err) {
+    console.error('Fetch failed:', err);
+    return null;
+  }
+}
+
+async function fetchBlockingPlain(url) {
+  try {
+    // This will "pause" until the fetch resolves
+    const response = await fetch(url, {
+        credentials: "include" // send stored cookies
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.text(); // or response.text() depending on your API
+    return data;
+  } catch (err) {
+    console.error('Fetch failed:', err);
+    return null;
+  }
+}
+
+function parseTo2DArray(data){
+  if (data && Array.isArray(data)) {
+    return data.map(obj => [
+      obj.id,
+      obj.price + " Kč",
+      obj.email,
+      obj.date,
+      obj.status
+    ]);
+  }
+}
+
+// Usage:
+async function render() {
+  console.log('Fetching...');
+  const result = await fetchBlockingJson(`https://127.0.0.1:8080/get_database${window.location.search}`);
+  if (result) {
+    rows = parseTo2DArray(result.data);
+    console.log('set')
+  }
+  else {
+    alert("failed to fetch data");
+  }
+renderUI();
+}
+
+render();
 
 let selected_ticket = [];
 let selected_index = -1;
@@ -167,16 +105,25 @@ function leave() {
   window.location.replace("../index.html");
 }
 
-function refresh() { alert("refresh"); }
-function edit_email(index, newEmail) {
-  rows[index][2].text = newEmail;
-  render();
+function refresh() { render(); }
+async function edit_email(index, newEmail) {
+  try {
+    // Wait for server response before updating UI
+    const result = await fetchBlockingPlain(`https://127.0.0.1:8080/edit_mail?id=${index}&mail=${encodeURIComponent(newEmail)}`);
+    console.log(result);
+
+    // Only update local rows & render after successful response
+    rows[index][2] = newEmail;
+    render();
+  } catch (err) {
+    console.error('Failed to edit email:', err);
+  }
 }
 function resend_email(index) {
-  alert("Resent ticket " + rows[index][0].text);
+  alert("Resent ticket " + rows[index][0]);
 }
 
-function render() {
+function renderUI() {
   app.innerHTML = "";
 
   const root = document.createElement("div");
@@ -237,9 +184,9 @@ function render() {
   right.appendChild(ticketImg);
 
   const fields = [
-    ["Ticket number:", selected_ticket[0]?.text || ""],
-    ["E-mail:", selected_ticket[2]?.text || ""],
-    ["Bought date:", selected_ticket[3]?.text || ""],
+    ["Ticket number:", selected_ticket[0] || ""],
+    ["E-mail:", selected_ticket[2] || ""],
+    ["Bought date:", selected_ticket[3] || ""],
   ];
 
   fields.forEach(([label, value]) => {
@@ -289,25 +236,25 @@ function render() {
 
   if (paused) {
     showMailChanger({
-        initialEmail: selected_ticket[2]?.text || "",
+        initialEmail: selected_ticket[2] || "",
         onConfirm(email) {
-        paused = false;
-        edit_email(selected_index, email); // edit_email already calls render()
+          paused = false;
+          edit_email(selected_index, email); // edit_email already calls render()
         },
         onCancel() {
-        paused = false;
-        render(); // render once
+          paused = false;
+          render(); // render once
         }
     });
   }
   
   if (should_yell) {
     showYeller({
-        reassure_text: `This will send an email to ${selected_ticket[2]?.text} with ticket ${selected_ticket[0]?.text}. Are you sure?`,
+        reassure_text: `This will send an email to ${selected_ticket[2]} with ticket ${selected_ticket[0]}. Are you sure?`,
         onResponse(answer) {
-        should_yell = false;
-        if (answer) resend_email(selected_index); // can call render inside
-        render(); // render once to update UI
+          should_yell = false;
+          if (answer) resend_email(selected_index); // can call render inside
+          render(); // render once to update UI
         }
     });
   }
@@ -323,9 +270,9 @@ function updateRightPanel() {
   right.appendChild(ticketImg);
 
   const fields = [
-    ["Ticket number:", selected_ticket[0]?.text || ""],
-    ["E-mail:", selected_ticket[2]?.text || ""],
-    ["Bought date:", selected_ticket[3]?.text || ""],
+    ["Ticket number:", selected_ticket[0] || ""],
+    ["E-mail:", selected_ticket[2] || ""],
+    ["Bought date:", selected_ticket[3] || ""],
   ];
 
   fields.forEach(([label, value]) => {
@@ -341,7 +288,7 @@ function updateRightPanel() {
   editBtn.disabled = selected_ticket.length === 0;
   editBtn.onclick = () => {
     paused = true;
-    render(); // show mail changer modal
+    renderUI(); // show mail changer modal
   };
 
   const resendBtn = document.createElement("button");
@@ -349,12 +296,10 @@ function updateRightPanel() {
   resendBtn.disabled = selected_ticket.length === 0;
   resendBtn.onclick = () => {
     should_yell = true;
-    render(); // show confirmation modal
+    renderUI(); // show confirmation modal
   };
 
   right.appendChild(editBtn);
   right.appendChild(resendBtn);
 }
 
-
-render();
