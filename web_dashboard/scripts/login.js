@@ -2,20 +2,14 @@ const submit = document.getElementById("login-btn");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
 
-
-email.value = "roubradek1@gmail.com";
-password.value = "123";
-
-
-submit.onclick = () => {
-    login().then(() => testCookie());
+submit.onclick = (event) => {
+    event.preventDefault();
+    login();
 };
-
-login().then(() => testCookie());
 
 async function login() {
     try {
-        const response = await fetch("https://127.0.0.1:8080/login", {
+        const response = await fetch("https://192.168.50.109:8080/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -33,6 +27,9 @@ async function login() {
             alert("Login failed: " + text);
             return;
         }
+        else {
+            window.location.replace("../");
+        }
 
         console.log("Login successful!");
         // Cookie is automatically stored by the browser
@@ -44,7 +41,7 @@ async function login() {
 
 
 async function testCookie() {
-    const response = await fetch("https://127.0.0.1:8080/protected", {
+    const response = await fetch("https://192.168.50.109:8080/protected", {
         credentials: "include" // send stored cookies
     });
 

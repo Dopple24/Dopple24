@@ -81,7 +81,7 @@ function parseTo2DArray(data){
 // Usage:
 async function render() {
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://127.0.0.1:8080/get_database${window.location.search}`);
+  const result = await fetchBlockingJson(`https://192.168.50.109:8080/get_database${window.location.search}`);
   if (result) {
     rows = parseTo2DArray(result.data);
     console.log('set')
@@ -91,6 +91,9 @@ async function render() {
   }
 renderUI();
 }
+
+const params = new URLSearchParams(window.location.search);
+const database_id = params.get("id");
 
 render();
 
@@ -109,7 +112,7 @@ function refresh() { render(); }
 async function edit_email(index, newEmail) {
   try {
     // Wait for server response before updating UI
-    const result = await fetchBlockingPlain(`https://127.0.0.1:8080/edit_mail?id=${index}&mail=${encodeURIComponent(newEmail)}`);
+    const result = await fetchBlockingPlain(`https://192.168.50.109:8080/edit_mail?id=${index}&mail=${encodeURIComponent(newEmail)}&database_id=${database_id}`);
     console.log(result);
 
     // Only update local rows & render after successful response

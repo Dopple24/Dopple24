@@ -12,7 +12,25 @@ let should_yell = false;
 
 const app = document.getElementById("app");
 
-function leave() { alert("leave"); }
+async function leave() { 
+  try {
+    // This will "pause" until the fetch resolves
+    const response = await fetch("https://192.168.50.109:8080/logout", {
+        method: "POST",
+        credentials: "include" // send stored cookies
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    else {
+      window.location.replace("./subpages/login.html");
+    }
+  } catch (err) {
+    console.error('Fetch failed:', err);
+  }
+}
+
 function refresh() { render(); }
 function create_ticket() {
   window.location.replace("./subpages/ticket_creator.html");
@@ -51,7 +69,7 @@ function parseTo2DArray(data){
 
 async function render() {
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://127.0.0.1:8080/get_events`);
+  const result = await fetchBlockingJson(`https://192.168.50.109:8080/get_events`);
   if (result) {
     rows = parseTo2DArray(result);
     console.log('set', result)
@@ -89,7 +107,7 @@ function renderUI() {
   const left = document.createElement("div");
   left.className = "leftbar";
   const leaveBtn = document.createElement("button");
-  leaveBtn.textContent = "leave";
+  leaveBtn.textContent = "log out";
   leaveBtn.onclick = leave;
   const refreshBtn = document.createElement("button");
   refreshBtn.textContent = "refresh";
@@ -97,9 +115,14 @@ function renderUI() {
   const createTicketBtn = document.createElement("button");
   createTicketBtn.textContent = "create ticket";
   createTicketBtn.onclick = create_ticket;
+  const createEvent = document.createElement("button");
+  createEvent.textContent = "create event";
+  createEvent.onclick = add_event;
   left.appendChild(leaveBtn);
   left.appendChild(refreshBtn);
   left.appendChild(createTicketBtn);
+  left.appendChild(createEvent);
+
 
   const center = document.createElement("div");
   center.className = "main-content";
@@ -230,6 +253,26 @@ function updateRightPanel() {
   };
 
   right.appendChild(openBtn);
+}
+
+async function add_event() {
+  fetch("https://192.168.50.109:8080/add_event", {
+    method: "POST",
+    credentials: "include", // send cookies
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      event_name: "Event",
+      event_date: "2026-02-01",
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Request failed");
+    return res.json(); // or res.text()
+  })
+  .then(data => console.log("Server response:", data))
+  .catch(err => console.error("Error:", err));
 }
 
 
