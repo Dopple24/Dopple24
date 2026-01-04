@@ -2,7 +2,7 @@ import { renderTable } from "./table.js";
 
 let titles = ["id", "event name", "sold tickets", "event date", "status"];
 let rows = [
-  ["1002","Maturitní ples","1000","2025-02-14","closed"],
+  [],
 ];
 
 let selected_ticket = [];
@@ -31,7 +31,7 @@ async function leave() {
   }
 }
 
-function refresh() { render(); }
+function refresh() { renderUI(); }
 function create_ticket() {
   window.location.replace("./subpages/ticket_creator.html");
 }
@@ -76,6 +76,9 @@ async function render() {
     renderUI();
   }
   else {
+    rows = [
+      ["1002","Maturitní ples","1000","2025-02-14","closed"],
+    ];
     renderUI();
     alert("failed to fetch data")
   }
@@ -203,7 +206,7 @@ function renderUI() {
         },
         onCancel() {
         paused = false;
-        render(); // render once
+        renderUI(); // render once
         }
     });
   }
@@ -276,4 +279,5 @@ async function add_event() {
 }
 
 
+renderUI();
 render();

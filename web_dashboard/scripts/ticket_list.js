@@ -3,7 +3,7 @@ import { showMailChanger } from "./mail_changer.js";
 import { showYeller } from "./reassurer.js";
 
 let titles = ["id", "price", "email", "buy date", "status"];
-let rows = [
+let rows_default = [
   ["1002", "$25", "b@test.com", "2025-02-14", "OK"],
   ["1003", "$40", "c@test.com", "2025-03-10", "Error"],
   ["1004", "$35", "d@test.com", "2025-04-01", "OK"],
@@ -27,6 +27,7 @@ let rows = [
   ["1011", "$15", "k@test.com", "2025-11-05", "Error"],
   ["1011", "$15", "k@test.com", "2025-11-05", "Error"],
 ];
+let rows = [[]]
 
 async function fetchBlockingJson(url) {
   try {
@@ -39,7 +40,7 @@ async function fetchBlockingJson(url) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.json(); // or response.text() depending on your API
+    const data = await response.json();
     return data;
   } catch (err) {
     console.error('Fetch failed:', err);
@@ -49,16 +50,15 @@ async function fetchBlockingJson(url) {
 
 async function fetchBlockingPlain(url) {
   try {
-    // This will "pause" until the fetch resolves
     const response = await fetch(url, {
-        credentials: "include" // send stored cookies
+        credentials: "include" 
     });
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.text(); // or response.text() depending on your API
+    const data = await response.text();
     return data;
   } catch (err) {
     console.error('Fetch failed:', err);
@@ -88,6 +88,7 @@ async function render() {
   }
   else {
     alert("failed to fetch data");
+    rows = rows_default;
   }
 renderUI();
 }
@@ -95,7 +96,6 @@ renderUI();
 const params = new URLSearchParams(window.location.search);
 const database_id = params.get("id");
 
-render();
 
 let selected_ticket = [];
 let selected_index = -1;
@@ -205,7 +205,7 @@ function renderUI() {
   editBtn.disabled = selected_ticket.length === 0;
   editBtn.onclick = () => {
     paused = true;
-    render();
+    renderUI();
   };
 
   const resendBtn = document.createElement("button");
@@ -213,7 +213,7 @@ function renderUI() {
   resendBtn.disabled = selected_ticket.length === 0;
   resendBtn.onclick = () => {
     should_yell = true;
-    render();
+    renderUI();
   };
 
   right.appendChild(editBtn);
@@ -246,7 +246,7 @@ function renderUI() {
         },
         onCancel() {
           paused = false;
-          render(); // render once
+          renderUI(); // render once
         }
     });
   }
@@ -257,7 +257,7 @@ function renderUI() {
         onResponse(answer) {
           should_yell = false;
           if (answer) resend_email(selected_index); // can call render inside
-          render(); // render once to update UI
+          renderUI(); // render once to update UI
         }
     });
   }
@@ -306,3 +306,5 @@ function updateRightPanel() {
   right.appendChild(resendBtn);
 }
 
+renderUI();
+render();
