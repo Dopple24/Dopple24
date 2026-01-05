@@ -17,7 +17,7 @@ height: 100vh;
     display: flex;
     align-items: center;
     padding-left: 1.5vh;
-    height: 10%;
+    height: 7%;
 }
 
 .topbar img {
@@ -39,14 +39,7 @@ flex-direction: column;
 gap: 10px;
 }
 
-.rightbar {
-background: var(--primary-background);
-padding: 20px;
-display: flex;
-flex-direction: column;
-gap: 10px;
-width: 20%;
-}
+.rightbar {background: var(--primary-background);padding: 20px;display: flex;flex-direction: column;gap: 10px;width: 20%;}
 
 .rightbar img {
 width: 100%;
@@ -68,4 +61,62 @@ cursor: pointer;
 button:disabled {
 opacity: 0.5;
 cursor: default;
+}
+
+@media (min-width:480px)  {
+    .rightbar img {
+        display: None;
+    }
+
+    .rightbar {
+        flex-direction: row;
+        width: 100%;
+        margin: 0 5%;
+        padding: 0;
+        gap: 0;
+    }
+
+    .rightbar button {
+        width: 90%;
+    }
+
+    .rightLabel {
+        display: None;
+    }
+
+    .rightValue {
+        display: None;
+    }
+
+    .main {
+        flex-direction: column;
+    }
+
+    .main-content {
+        height: 60vh;
+    }
+    
+    .table {
+        height: 100%;
+    }
+
+    .leftbar {
+        flex-direction: row;
+        width: 100%;
+        margin: 0 3%;
+        padding: 0;
+        gap: 2%;
+        height: 3vh;
+    }
+
+    .leftbar button {
+        width: 46%;
+    }
+
+    .topbar {
+        height: 7%;
+        padding-left: 0;
+        padding-right: 2%;
+        justify-content: center;
+    }
 }
