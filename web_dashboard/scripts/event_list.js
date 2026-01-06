@@ -15,7 +15,7 @@ const app = document.getElementById("app");
 async function leave() { 
   try {
     // This will "pause" until the fetch resolves
-    const response = await fetch("https://192.168.50.109:8080/logout", {
+    const response = await fetch("https://192.168.50.179:8080/logout", {
         method: "POST",
         credentials: "include" // send stored cookies
     });
@@ -31,7 +31,7 @@ async function leave() {
   }
 }
 
-function refresh() { renderUI(); }
+function refresh() { render(); }
 function create_ticket() {
   window.location.replace("./subpages/ticket_creator.html");
 }
@@ -69,7 +69,7 @@ function parseTo2DArray(data){
 
 async function render() {
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://192.168.50.109:8080/get_events`);
+  const result = await fetchBlockingJson(`https://192.168.50.179:8080/get_events`);
   if (result) {
     rows = parseTo2DArray(result);
     console.log('set', result)
@@ -77,7 +77,7 @@ async function render() {
   }
   else {
     rows = [
-      ["1002","Maturitní ples","1000","2025-02-14","closed"],
+      ["1","Maturitní ples","1000","2025-02-14","closed"],
     ];
     renderUI();
     alert("failed to fetch data")
@@ -252,21 +252,20 @@ function updateRightPanel() {
   openBtn.disabled = selected_ticket.length === 0;
   openBtn.onclick = () => {
     console.log(selected_index);
-    window.location.replace(`./subpages/ticket_list.html?id=${selected_ticket[0]}`)
+    window.location.replace(`./subpages/ticket_list.html?event_id=${selected_ticket[0]}`)
   };
 
   right.appendChild(openBtn);
 }
 
 async function add_event() {
-  fetch("https://192.168.50.109:8080/add_event", {
+  fetch("https://192.168.50.179:8080/add_event", {
     method: "POST",
-    credentials: "include", // send cookies
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      event_name: "Event",
+      event_name: "3",
       event_date: "2026-02-01",
     })
   })

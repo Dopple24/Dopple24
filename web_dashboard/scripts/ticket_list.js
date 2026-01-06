@@ -33,7 +33,6 @@ async function fetchBlockingJson(url) {
   try {
     // This will "pause" until the fetch resolves
     const response = await fetch(url, {
-        credentials: "include" // send stored cookies
     });
 
     if (!response.ok) {
@@ -48,22 +47,24 @@ async function fetchBlockingJson(url) {
   }
 }
 
-async function fetchBlockingPlain(url) {
-  try {
-    const response = await fetch(url, {
-        credentials: "include" 
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.text();
-    return data;
-  } catch (err) {
-    console.error('Fetch failed:', err);
-    return null;
-  }
+async function editMail(index, new_email, database_id) {
+  const response = await fetch("https://192.168.50.179:8080/edit_mail", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      index: index,
+      new_email: new_email,
+      database_id: database_id
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Request failed");
+    return res.json(); // or res.text()
+  })
+  .then(data => console.log("Server response:", data))
+  .catch(err => console.error("Error:", err));
 }
 
 function parseTo2DArray(data){
@@ -81,7 +82,7 @@ function parseTo2DArray(data){
 // Usage:
 async function render() {
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://192.168.50.109:8080/get_database${window.location.search}`);
+  const result = await fetchBlockingJson(`https://192.168.50.179:8080/get_database${window.location.search}`);
   if (result) {
     rows = parseTo2DArray(result.data);
     console.log('set')
@@ -94,7 +95,7 @@ renderUI();
 }
 
 const params = new URLSearchParams(window.location.search);
-const database_id = params.get("id");
+const database_id = params.get("event_id");
 
 
 let selected_ticket = [];
@@ -112,7 +113,7 @@ function refresh() { render(); }
 async function edit_email(index, newEmail) {
   try {
     // Wait for server response before updating UI
-    const result = await fetchBlockingPlain(`https://192.168.50.109:8080/edit_mail?id=${index}&mail=${encodeURIComponent(newEmail)}&database_id=${database_id}`);
+    const result = await editMail(index, newEmail, database_id);
     console.log(result);
 
     // Only update local rows & render after successful response

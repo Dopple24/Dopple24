@@ -27,7 +27,7 @@ async function register() {
         return { success: false, message: "Passwords do not match." };
     }
 
-    const response = await fetch("https://192.168.50.109:8080/register", {
+    const response = await fetch("https://192.168.50.179:8080/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
