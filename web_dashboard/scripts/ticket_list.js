@@ -27,8 +27,8 @@ let rows_default = [
   ["1011", "$15", "k@test.com", "2025-11-05", "Error"],
   ["1011", "$15", "k@test.com", "2025-11-05", "Error"],
 ];
-let rows = [[]]
-
+let rows = [[]];
+let right;
 async function fetchBlockingJson(url) {
   try {
     // This will "pause" until the fetch resolves
@@ -91,6 +91,9 @@ async function render() {
     alert("failed to fetch data");
     rows = rows_default;
   }
+  
+  selected_ticket = [];
+  selected_index = -1;
 renderUI();
 }
 
@@ -164,7 +167,6 @@ function renderUI() {
   left.appendChild(refreshBtn);
   left.appendChild(createTicketBtn);
 
-
   const center = document.createElement("div");
   center.className = "main-content";
 
@@ -184,57 +186,19 @@ function renderUI() {
     }
   });
 
-
-  const right = document.createElement("div");
+  right = document.createElement("div");
   right.className = "rightbar";
-
-  const ticketImg = document.createElement("img");
-  ticketImg.src = "../assets/cropped.png";
-  right.appendChild(ticketImg);
-
-  const fields = [
-    ["Ticket number:", selected_ticket[0] || ""],
-    ["E-mail:", selected_ticket[2] || ""],
-    ["Bought date:", selected_ticket[3] || ""],
-  ];
-
-  fields.forEach(([label, value]) => {
-    const row = document.createElement("div");
-    row.style.display = "flex";
-    row.style.justifyContent = "space-between";
-    row.innerHTML = `<span class="rightLabel">${label}</span><span class="rightValue">${value}</span>`;
-    right.appendChild(row);
-  });
-
-  const editBtn = document.createElement("button");
-  editBtn.textContent = "edit e-mail";
-  editBtn.disabled = selected_ticket.length === 0;
-  editBtn.onclick = () => {
-    paused = true;
-    renderUI();
-  };
-
-  const resendBtn = document.createElement("button");
-  resendBtn.textContent = "resend email";
-  resendBtn.disabled = selected_ticket.length === 0;
-  resendBtn.onclick = () => {
-    should_yell = true;
-    renderUI();
-  };
-
-  
-
-  right.appendChild(editBtn);
-  right.appendChild(resendBtn);
 
   main.appendChild(left);
   main.appendChild(center);
   main.appendChild(right);
 
+
   root.appendChild(top);
   root.appendChild(main);
   app.appendChild(root);
 
+  updateRightPanel();
   
   const scrollElement = document.querySelector('.scroll');
   const header = document.querySelector('.header');
@@ -273,18 +237,21 @@ function renderUI() {
 
 function updateRightPanel() {
   const right = document.querySelector(".rightbar");
-  if (!right) return;
+  if (!right) {
+    console.log("no right found");
+    return;
+  }
   right.innerHTML = ""; // clear old info
-
-  const ticketImg = document.createElement("img");
-  ticketImg.src = "../assets/cropped.png";
-  right.appendChild(ticketImg);
 
   const fields = [
     ["Ticket number:", selected_ticket[0] || ""],
     ["E-mail:", selected_ticket[2] || ""],
     ["Bought date:", selected_ticket[3] || ""],
   ];
+
+  const ticketImg = document.createElement("img");
+  ticketImg.src = "../assets/cropped.png";
+  right.appendChild(ticketImg);
 
   fields.forEach(([label, value]) => {
     const row = document.createElement("div");
@@ -294,12 +261,15 @@ function updateRightPanel() {
     right.appendChild(row);
   });
 
+
+
+  
   const editBtn = document.createElement("button");
   editBtn.textContent = "edit e-mail";
   editBtn.disabled = selected_ticket.length === 0;
   editBtn.onclick = () => {
     paused = true;
-    renderUI(); // show mail changer modal
+    renderUI();
   };
 
   const resendBtn = document.createElement("button");
@@ -307,11 +277,22 @@ function updateRightPanel() {
   resendBtn.disabled = selected_ticket.length === 0;
   resendBtn.onclick = () => {
     should_yell = true;
-    renderUI(); // show confirmation modal
+    renderUI();
   };
+
+  const deleteBtn = document.createElement("button");
+  console.log(selected_ticket[4]);
+  deleteBtn.textContent = selected_ticket[4] == "deleted" ? "revive ticket" : "delete ticket";
+  deleteBtn.disabled = selected_ticket.length === 0;
+  deleteBtn.onclick = () => {
+    delete_ticket()
+    renderUI();
+  };
+
 
   right.appendChild(editBtn);
   right.appendChild(resendBtn);
+  right.appendChild(deleteBtn);
 }
 
 async function create_ticket() {
@@ -325,6 +306,25 @@ async function create_ticket() {
       seat: null,
       price: null,
       address: null,
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Request failed");
+    return res.json(); // or res.text()
+  })
+  .then(refresh())
+  .catch(err => console.error("Error:", err));
+}
+
+async function delete_ticket() {
+  fetch("https://192.168.50.179:8080/toggle_ticket", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      database_id: database_id,
+      index: parseInt(selected_ticket[0]),
     })
   })
   .then(res => {
