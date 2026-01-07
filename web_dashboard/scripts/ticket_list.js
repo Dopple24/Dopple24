@@ -157,8 +157,13 @@ function renderUI() {
   const refreshBtn = document.createElement("button");
   refreshBtn.textContent = "refresh";
   refreshBtn.onclick = refresh;
+  const createTicketBtn = document.createElement("button");
+  createTicketBtn.textContent = "create new ticket";
+  createTicketBtn.onclick = create_ticket;
   left.appendChild(leaveBtn);
   left.appendChild(refreshBtn);
+  left.appendChild(createTicketBtn);
+
 
   const center = document.createElement("div");
   center.className = "main-content";
@@ -216,6 +221,8 @@ function renderUI() {
     should_yell = true;
     renderUI();
   };
+
+  
 
   right.appendChild(editBtn);
   right.appendChild(resendBtn);
@@ -305,6 +312,27 @@ function updateRightPanel() {
 
   right.appendChild(editBtn);
   right.appendChild(resendBtn);
+}
+
+async function create_ticket() {
+  fetch("https://192.168.50.179:8080/create_ticket", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      event_id: database_id,
+      seat: null,
+      price: null,
+      address: null,
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Request failed");
+    return res.json(); // or res.text()
+  })
+  .then(refresh())
+  .catch(err => console.error("Error:", err));
 }
 
 renderUI();

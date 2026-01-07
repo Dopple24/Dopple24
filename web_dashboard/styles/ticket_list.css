@@ -63,7 +63,7 @@ opacity: 0.5;
 cursor: default;
 }
 
-@media (min-width:480px)  {
+@media (max-width:480px)  {
     .rightbar img {
         display: None;
     }
