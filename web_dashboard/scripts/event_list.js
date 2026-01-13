@@ -1,4 +1,5 @@
 import { renderTable } from "./table.js";
+import { showMailChanger, EntryType } from "./reassurer.js";
 
 let titles = ["id", "event name", "sold tickets", "event date", "status"];
 let rows = [
@@ -9,6 +10,10 @@ let selected_ticket = [];
 let selected_index = -1;
 let paused = false;
 let should_yell = false;
+
+let editorWindow = null;
+
+let boxX, boxY, boxWidth, boxHeight, previewImage = null;
 
 const app = document.getElementById("app");
 
@@ -32,9 +37,6 @@ async function leave() {
 }
 
 function refresh() { render(); }
-function create_ticket() {
-  window.location.replace("./subpages/ticket_creator.html");
-}
 
 async function fetchBlockingJson(url) {
   try {
@@ -115,15 +117,11 @@ function renderUI() {
   const refreshBtn = document.createElement("button");
   refreshBtn.textContent = "refresh";
   refreshBtn.onclick = refresh;
-  const createTicketBtn = document.createElement("button");
-  createTicketBtn.textContent = "create ticket";
-  createTicketBtn.onclick = create_ticket;
   const createEvent = document.createElement("button");
   createEvent.textContent = "create event";
   createEvent.onclick = add_event;
   left.appendChild(leaveBtn);
   left.appendChild(refreshBtn);
-  left.appendChild(createTicketBtn);
   left.appendChild(createEvent);
 
 
@@ -196,20 +194,6 @@ function renderUI() {
   } else {
     header.classList.remove("active"); // remove the class 
   }
-
-  if (paused) {
-    showMailChanger({
-        initialEmail: selected_ticket[2]?.text || "",
-        onConfirm(email) {
-        paused = false;
-        edit_email(selected_index, email); // edit_email already calls render()
-        },
-        onCancel() {
-        paused = false;
-        renderUI(); // render once
-        }
-    });
-  }
   
   if (should_yell) {
     showYeller({
@@ -258,23 +242,86 @@ function updateRightPanel() {
   right.appendChild(openBtn);
 }
 
-async function add_event() {
+function add_event() {
+  showMailChanger({
+    titleName: "Create event",
+    contents: [
+      [EntryType.TEXT, ["email", "E-mail", ""]], 
+      [EntryType.TEXT, ["date", "Date", "01-01-01"]], 
+      [EntryType.BUTTON, ["button", "Click me", () => {
+        editorWindow = window.open("./subpages/ticket_creator.html", "editor", "width=1000,height=800");
+      }]]
+    ],
+    onConfirm: ([event_name, event_date]) => add_event_passed(event_name, event_date, previewImage),
+    onCancel: () => console.log("Cancelled")
+  });
+}
+
+async function add_event_passed(event_name, event_date, event_image) {
+  console.log(event_date, event_name);
   fetch("https://192.168.50.179:8080/add_event", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      event_name: "3",
-      event_date: "2026-02-01",
+      event_name: "" + event_name,
+      event_date: "" + event_date,
+      image: "" + event_image,
     })
   })
   .then(res => {
+    console.log(res);
     if (!res.ok) throw new Error("Request failed");
     return res.json(); // or res.text()
   })
   .then(data => console.log("Server response:", data))
   .catch(err => console.error("Error:", err));
+}
+
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "numberBoxSaved") {
+    const { image, box } = event.data.payload;
+
+    console.log("Received from editor:", box);
+
+    boxX = box.x;
+    boxY = box.y;
+    boxHeight = box.height;
+    boxWidth = box.width;
+    previewImage = image;
+    setPreview(image);
+    const file = base64ToFile(image, "upload.png");
+    const formData = new FormData();
+    formData.append("image", file);
+    console.log(formData);
+  }
+});
+
+//const previewBox = document.getElementById("preview");
+//const previewImg = document.getElementById("preview-img");
+
+function setPreview(src) {
+  console.log(src);
+  /*previewImg.src = src;
+  previewImg.onload = () => {
+    previewBox.classList.add("has-image");
+  };*/ //Does not have preview implemented
+}
+
+function base64ToFile(base64, filename = "image.png") {
+  const [header, data] = base64.split(",");
+  const mime = header.match(/:(.*?);/)[1];
+
+  const binary = atob(data);
+  const len = binary.length;
+  const buffer = new Uint8Array(len);
+
+  for (let i = 0; i < len; i++) {
+    buffer[i] = binary.charCodeAt(i);
+  }
+
+  return new File([buffer], filename, { type: mime });
 }
 
 

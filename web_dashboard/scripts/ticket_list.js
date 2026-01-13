@@ -1,6 +1,5 @@
 import { renderTable } from "./table.js";
-import { showMailChanger } from "./mail_changer.js";
-import { showYeller } from "./reassurer.js";
+import { showYeller, EntryType, showMailChanger } from "./reassurer.js";
 
 let titles = ["id", "price", "email", "buy date", "status"];
 let rows_default = [
@@ -211,10 +210,11 @@ function renderUI() {
 
   if (paused) {
     showMailChanger({
-        initialEmail: selected_ticket[2] || "",
+        titleName: "change email",
+        contents: [[EntryType.TEXT, ["email", "e-mail:", selected_ticket[2] || ""]]],
         onConfirm(email) {
           paused = false;
-          edit_email(selected_index, email); // edit_email already calls render()
+          edit_email(parseInt(selected_ticket[0]), email[0]); // edit_email already calls render()
         },
         onCancel() {
           paused = false;
@@ -295,7 +295,20 @@ function updateRightPanel() {
   right.appendChild(deleteBtn);
 }
 
-async function create_ticket() {
+function create_ticket() {
+  showMailChanger({
+    titleName: "manually add a ticket",
+    contents: [
+      [EntryType.TEXT, ["text", "seat", ""]], 
+      [EntryType.TEXT, ["number", "price", ""]], 
+      [EntryType.TEXT, ["email", "email", ""]]
+    ],
+    onConfirm: ([seat, price, email]) => post_create_ticket(seat, price, email),
+    onCancel: () => console.log("Cancelled")
+  });
+}
+
+async function post_create_ticket(seat = null, price = null, address = null) {
   fetch("https://192.168.50.179:8080/create_ticket", {
     method: "POST",
     headers: {
@@ -303,9 +316,9 @@ async function create_ticket() {
     },
     body: JSON.stringify({
       event_id: database_id,
-      seat: null,
-      price: null,
-      address: null,
+      seat: seat,
+      price: parseInt(price),
+      address: address,
     })
   })
   .then(res => {

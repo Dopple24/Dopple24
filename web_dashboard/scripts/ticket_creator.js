@@ -47,6 +47,17 @@ function mouseToImageNorm(e) {
   };
 }
 
+function getImageDataURL() {
+  const canvas = document.createElement("canvas");
+  canvas.width = image.naturalWidth;
+  canvas.height = image.naturalHeight;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(image, 0, 0);
+
+  return canvas.toDataURL("image/png");
+}
+
 /* ---------------- Render ---------------- */
 
 function renderNumberBox() {
@@ -139,10 +150,7 @@ window.addEventListener("resize", renderNumberBox);
 /* ---------------- Save ---------------- */
 
 saveBtn.addEventListener("click", () => {
-  if (!box) {
-    console.warn("No number box to save.");
-    return;
-  }
+  if (!box) return alert("No box!");
 
   const saved = {
     x: Math.round(box.x * image.naturalWidth),
@@ -151,11 +159,24 @@ saveBtn.addEventListener("click", () => {
     height: Math.round(box.height * image.naturalHeight)
   };
 
-  console.log("Saved number box (image pixels):");
-  console.log(saved);
+  const imageData = getImageDataURL();
+
+  console.log(imageData);
+  window.opener.postMessage(
+    {
+      type: "numberBoxSaved",
+      payload: {
+        image: imageData,
+        box: saved
+      }
+    },
+    "*"
+  );
+
+  window.close();
 });
 
-closeBtn.addEventListener("click", () => {
-  window.location.replace("../index.html");
 
+closeBtn.addEventListener("click", () => {
+  window.close();
 });
