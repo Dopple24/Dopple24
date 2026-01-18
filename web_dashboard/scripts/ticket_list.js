@@ -32,6 +32,11 @@ async function fetchBlockingJson(url) {
   try {
     // This will "pause" until the fetch resolves
     const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json",
+      },
     });
 
     if (!response.ok) {
@@ -47,8 +52,9 @@ async function fetchBlockingJson(url) {
 }
 
 async function editMail(index, new_email, database_id) {
-  const response = await fetch("https://192.168.50.179:8080/edit_mail", {
+  const response = await fetch("https://api.rmjws.cz/v1/customer/" + params.get("uuid") + "/edit_mail", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -81,7 +87,7 @@ function parseTo2DArray(data){
 // Usage:
 async function render() {
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://192.168.50.179:8080/get_database${window.location.search}`);
+  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer/${params.get("uuid")}/get_database?id=${params.get("id")}`);
   if (result) {
     rows = parseTo2DArray(result.data);
     console.log('set')
@@ -309,8 +315,9 @@ function create_ticket() {
 }
 
 async function post_create_ticket(seat = null, price = null, address = null) {
-  fetch("https://192.168.50.179:8080/create_ticket", {
+  fetch("https://api.rmjws.cz/v1/customer/" + params.get("uuid") + "/create_ticket", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -330,8 +337,9 @@ async function post_create_ticket(seat = null, price = null, address = null) {
 }
 
 async function delete_ticket() {
-  fetch("https://192.168.50.179:8080/toggle_ticket", {
+  fetch("https://api.rmjws.cz/v1/customer/" + params.get("uuid") + "/toggle_ticket", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },

@@ -9,13 +9,13 @@ submit.onclick = (event) => {
 
 async function login() {
     try {
-        const response = await fetch("https://192.168.50.179:8080/login", {
+        const response = await fetch("https://api.rmjws.cz/v1/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                username: email.value,
+                name: email.value,
                 password: password.value
             }),
             credentials: "include" // important for cookies
@@ -28,7 +28,9 @@ async function login() {
             return;
         }
         else {
-            window.location.replace("../");
+            const uuid = await response.text();
+            console.log(uuid);
+            window.location.replace("../?uuid=" + uuid);
         }
 
         console.log("Login successful!");
@@ -37,14 +39,4 @@ async function login() {
     } catch (err) {
         console.error("Fetch error:", err);
     }
-}
-
-
-async function testCookie() {
-    const response = await fetch("https://192.168.50.179:8080/protected", {
-        credentials: "include" // send stored cookies
-    });
-
-    const text = await response.text();
-    console.log(text); // will say either "Cookie is present and valid!" or "No session cookie found"
 }

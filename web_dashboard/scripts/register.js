@@ -27,13 +27,13 @@ async function register() {
         return { success: false, message: "Passwords do not match." };
     }
 
-    const response = await fetch("https://192.168.50.179:8080/register", {
+    const response = await fetch("https://api.rmjws.cz/v1/register", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            username: email.value,
+            name: email.value,
             password: password.value
         })
     });

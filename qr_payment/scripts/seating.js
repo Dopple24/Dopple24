@@ -49,7 +49,7 @@ function updateTableLabel(el) {
 
 async function fetchSeats() {
   try {
-    const response = await fetch("https://127.0.0.1:8080/seats");
+    const response = await fetch("https://api.rmjws.cz/v1/seats");
 
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
@@ -325,7 +325,7 @@ confirmBtn.addEventListener("click", async () => {
   }
 
   const orderID = await fetch(
-      `https://127.0.0.1:8080/reserve_seats?${query}`
+      `https://api.rmjws.cz/v1/reserve_seats?${query}`
       ).then(response => {
         switch (response.status) {
           case 200:

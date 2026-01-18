@@ -6,6 +6,10 @@ let rows = [
   [],
 ];
 
+const params = new URLSearchParams(window.location.search);
+const uuid = params.get("uuid");
+
+
 let selected_ticket = [];
 let selected_index = -1;
 let paused = false;
@@ -20,7 +24,7 @@ const app = document.getElementById("app");
 async function leave() { 
   try {
     // This will "pause" until the fetch resolves
-    const response = await fetch("https://192.168.50.179:8080/logout", {
+    const response = await fetch("https://api.rmjws.cz/v1/customer/${params.get(" + uuid + ")}/logout", {
         method: "POST",
         credentials: "include" // send stored cookies
     });
@@ -49,7 +53,7 @@ async function fetchBlockingJson(url) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.json(); // or response.text() depending on your API
+    const data = await response.text(); // or response.text() depending on your API
     return data;
   } catch (err) {
     console.error('Fetch failed:', err);
@@ -71,7 +75,7 @@ function parseTo2DArray(data){
 
 async function render() {
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://192.168.50.179:8080/get_events`);
+  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer/${uuid}/get_events`);
   if (result) {
     rows = parseTo2DArray(result);
     console.log('set', result)
@@ -172,7 +176,7 @@ function renderUI() {
   openBtn.disabled = selected_ticket.length === 0;
   openBtn.onclick = () => {
     console.log(selected_index);
-    window.location.replace(`./subpages/ticket_list.html?id=${selected_ticket[0]}`);
+    window.location.replace(`./subpages/ticket_list.html?id=${selected_ticket[0]}&uuid=${uuid}`);
   };
 
   right.appendChild(openBtn);
@@ -236,7 +240,7 @@ function updateRightPanel() {
   openBtn.disabled = selected_ticket.length === 0;
   openBtn.onclick = () => {
     console.log(selected_index);
-    window.location.replace(`./subpages/ticket_list.html?event_id=${selected_ticket[0]}`)
+    window.location.replace(`./subpages/ticket_list.html?id=${selected_ticket[0]}&uuid=${uuid}`);
   };
 
   right.appendChild(openBtn);
@@ -259,7 +263,7 @@ function add_event() {
 
 async function add_event_passed(event_name, event_date, event_image) {
   console.log(event_date, event_name);
-  fetch("https://192.168.50.179:8080/add_event", {
+  fetch("https://api.rmjws.cz/v1/customer/${params.get(" + uuid + ")}/add_event", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
