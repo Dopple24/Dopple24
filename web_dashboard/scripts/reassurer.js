@@ -1,4 +1,5 @@
 export const EntryType = Object.freeze({
+  DATE: "DATE",
   TEXT: "TEXT",
   PICKER: "PICKER",
   BUTTON: "BUTTON"
@@ -105,6 +106,16 @@ export function showMailChanger({ titleName, contents, onConfirm, onCancel }) {
         const [name, labelText, defaultValue] = data;
         input = document.createElement("input");
         input.type = "text";
+        input.name = name;
+        input.placeholder = labelText;
+        input.value = defaultValue ?? "";
+        break;
+      }
+
+      case EntryType.DATE: {
+        const [name, labelText, defaultValue] = data;
+        input = document.createElement("input");
+        input.type = "date";
         input.name = name;
         input.placeholder = labelText;
         input.value = defaultValue ?? "";

@@ -52,7 +52,7 @@ async function fetchBlockingJson(url) {
 }
 
 async function editMail(index, new_email, database_id) {
-  const response = await fetch("https://api.rmjws.cz/v1/customer/" + params.get("uuid") + "/edit_mail", {
+  const response = await fetch("https://api.rmjws.cz/v1/customer/edit_mail", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -86,10 +86,12 @@ function parseTo2DArray(data){
 
 // Usage:
 async function render() {
+  rows =[[]];
+  loader.style.display = "flex";
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer/${params.get("uuid")}/get_database?id=${params.get("id")}`);
+  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer/get_database/${params.get("id")}`);
   if (result) {
-    rows = parseTo2DArray(result.data);
+    rows = parseTo2DArray(result.tickets);
     console.log('set')
   }
   else {
@@ -99,11 +101,13 @@ async function render() {
   
   selected_ticket = [];
   selected_index = -1;
-renderUI();
+  renderUI();
+  loader.style.display = "none";
+
 }
 
 const params = new URLSearchParams(window.location.search);
-const database_id = params.get("event_id");
+const database_id = params.get("id");
 
 
 let selected_ticket = [];
@@ -156,21 +160,28 @@ function renderUI() {
   // Main
   const main = document.createElement("div");
   main.className = "main";
+  
+  const loader = document.createElement("img");
+  loader.src = "../assets/RMJ_dark copy.svg";
+  loader.id = "loader";
 
   const left = document.createElement("div");
   left.className = "leftbar";
   const leaveBtn = document.createElement("button");
   leaveBtn.textContent = "leave";
+  leaveBtn.classList.add("leave-button");
   leaveBtn.onclick = leave;
   const refreshBtn = document.createElement("button");
   refreshBtn.textContent = "refresh";
+  refreshBtn.classList.add("refresh-button");
   refreshBtn.onclick = refresh;
   const createTicketBtn = document.createElement("button");
   createTicketBtn.textContent = "create new ticket";
+  createTicketBtn.classList.add("create-ticket-button");
   createTicketBtn.onclick = create_ticket;
   left.appendChild(leaveBtn);
-  left.appendChild(refreshBtn);
   left.appendChild(createTicketBtn);
+  left.appendChild(refreshBtn);
 
   const center = document.createElement("div");
   center.className = "main-content";
@@ -197,6 +208,7 @@ function renderUI() {
   main.appendChild(left);
   main.appendChild(center);
   main.appendChild(right);
+  main.append(loader);
 
 
   root.appendChild(top);
@@ -315,7 +327,7 @@ function create_ticket() {
 }
 
 async function post_create_ticket(seat = null, price = null, address = null) {
-  fetch("https://api.rmjws.cz/v1/customer/" + params.get("uuid") + "/create_ticket", {
+  fetch("https://api.rmjws.cz/v1/customer/create_ticket", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -337,7 +349,7 @@ async function post_create_ticket(seat = null, price = null, address = null) {
 }
 
 async function delete_ticket() {
-  fetch("https://api.rmjws.cz/v1/customer/" + params.get("uuid") + "/toggle_ticket", {
+  fetch("https://api.rmjws.cz/v1/customer/toggle_ticket", {
     method: "POST",
     credentials: "include",
     headers: {

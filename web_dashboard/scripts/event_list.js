@@ -7,7 +7,6 @@ let rows = [
 ];
 
 const params = new URLSearchParams(window.location.search);
-const uuid = params.get("uuid");
 
 
 let selected_ticket = [];
@@ -23,19 +22,14 @@ const app = document.getElementById("app");
 
 async function leave() { 
   try {
-    // This will "pause" until the fetch resolves
-    const response = await fetch("https://api.rmjws.cz/v1/customer/${params.get(" + uuid + ")}/logout", {
+    fetch("https://api.rmjws.cz/v1/customer/logout", {
         method: "POST",
         credentials: "include" // send stored cookies
     });
+    window.location.href = "./subpages/login.html";
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    else {
-      window.location.replace("./subpages/login.html");
-    }
   } catch (err) {
+    window.location.href = "./subpages/login.html";
     console.error('Fetch failed:', err);
   }
 }
@@ -46,14 +40,14 @@ async function fetchBlockingJson(url) {
   try {
     // This will "pause" until the fetch resolves
     const response = await fetch(url, {
-        credentials: "include" // send stored cookies
+        credentials: "include"
     });
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.text(); // or response.text() depending on your API
+    const data = await response.text();
     return data;
   } catch (err) {
     console.error('Fetch failed:', err);
@@ -61,24 +55,30 @@ async function fetchBlockingJson(url) {
   }
 }
 
-function parseTo2DArray(data){
-  if (data && Array.isArray(data)) {
+function parseTo2DArray(data) {
+  console.log(data);
+  //data = [{"id":"ee2b83b4-ab37-4bef-8795-7cd475e9adcc","event_name":"r","sold_tickets":0,"event_date":"2026-01-22T00:00:00Z","status":"","max_tickets":0,"tickets":[],"price":0,"buildings":{"tables":{},"obstacles":{}},"orders":[],"base64_image":"data:image/png;base64,dlouhejstring"},{"id":"c54be64e-2392-43b9-96a3-01e2797df24b","event_name":"name","sold_tickets":0,"event_date":"2026-01-30T00:00:00Z","status":"","max_tickets":0,"tickets":[],"price":0,"buildings":{"tables":{},"obstacles":{}},"orders":[],"base64_image":"test"}] ;
+  if (Array.isArray(data)) {
     return data.map(obj => [
-      obj.id,
-      obj.event_name,
-      obj.sold_tickets,
-      obj.event_date,
-      obj.status,
+      obj?.id ?? "",
+      obj?.event_name ?? "",
+      obj?.sold_tickets ?? 0,
+      obj?.event_date ?? "",
+      obj?.status ?? "",
     ]);
   }
+
+  // fallback if data is undefined, null, or not an array
+  return [["", "", "", "", ""]];
 }
 
 async function render() {
+  loader.style.display = "flex";
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer/${uuid}/get_events`);
+  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer/get_events`);
   if (result) {
-    rows = parseTo2DArray(result);
-    console.log('set', result)
+    rows = parseTo2DArray(JSON.parse(result));
+    console.log(result, rows);
     renderUI();
   }
   else {
@@ -88,6 +88,7 @@ async function render() {
     renderUI();
     alert("failed to fetch data")
   }
+  loader.style.display = "none";
 
 }
 
@@ -113,21 +114,27 @@ function renderUI() {
   const main = document.createElement("div");
   main.className = "main";
 
+  const loader = document.createElement("img");
+  loader.src = "./assets/RMJ_dark copy.svg";
+  loader.id = "loader";
+
   const left = document.createElement("div");
   left.className = "leftbar";
   const leaveBtn = document.createElement("button");
   leaveBtn.textContent = "log out";
+  leaveBtn.classList.add("leave-button");
   leaveBtn.onclick = leave;
   const refreshBtn = document.createElement("button");
   refreshBtn.textContent = "refresh";
+  refreshBtn.classList.add("refresh-button");
   refreshBtn.onclick = refresh;
   const createEvent = document.createElement("button");
   createEvent.textContent = "create event";
   createEvent.onclick = add_event;
   left.appendChild(leaveBtn);
-  left.appendChild(refreshBtn);
   left.appendChild(createEvent);
-
+  left.appendChild(refreshBtn);
+  main.append(loader);
 
   const center = document.createElement("div");
   center.className = "main-content";
@@ -148,7 +155,6 @@ function renderUI() {
     }
   });
 
-
   const right = document.createElement("div");
   right.className = "rightbar";
 
@@ -157,17 +163,25 @@ function renderUI() {
   right.appendChild(ticketImg);
 
   const fields = [
-    ["Event name:", selected_ticket[1] || ""],
-    ["Sold tickets:", selected_ticket[2] || ""],
-    ["Event date:", selected_ticket[3] || ""],
-    ["Status:", selected_ticket[4] || ""]
+    ["Event name:", (selected_ticket[1] || "").toString()],
+    ["Sold tickets:", (selected_ticket[2] || "").toString()],
+    ["Event date:", (selected_ticket[3] || "").toString()],
+    ["Status:", (selected_ticket[4] || "").toString()]
   ];
 
   fields.forEach(([label, value]) => {
     const row = document.createElement("div");
-    row.style.display = "flex";
-    row.style.justifyContent = "space-between";
-    row.innerHTML = `<span class="rightLabel">${label}</span><span class="rightValue">${value}</span>`;
+    row.classList.add("rightRow");
+
+    const labelSpan = document.createElement("span");
+    labelSpan.classList.add("rightLabel");
+    labelSpan.textContent = label;
+
+    const valueSpan = document.createElement("span");
+    valueSpan.classList.add("rightValue");
+    valueSpan.textContent = value;
+
+    row.append(labelSpan, valueSpan);
     right.appendChild(row);
   });
 
@@ -176,7 +190,7 @@ function renderUI() {
   openBtn.disabled = selected_ticket.length === 0;
   openBtn.onclick = () => {
     console.log(selected_index);
-    window.location.replace(`./subpages/ticket_list.html?id=${selected_ticket[0]}&uuid=${uuid}`);
+    window.location.href = `./subpages/ticket_list.html?id=${selected_ticket[0]}`;
   };
 
   right.appendChild(openBtn);
@@ -221,17 +235,25 @@ function updateRightPanel() {
   right.appendChild(ticketImg);
 
   const fields = [
-    ["Event name:", selected_ticket[1] || ""],
-    ["Sold tickets:", selected_ticket[2] || ""],
-    ["Event date:", selected_ticket[3] || ""],
-    ["Status:", selected_ticket[4] || ""]
+    ["Event name:", (selected_ticket[1] || "").toString()],
+    ["Sold tickets:", (selected_ticket[2] || 0).toString()],
+    ["Event date:", (selected_ticket[3] || "").toString()],
+    ["Status:", (selected_ticket[4] || "").toString()]
   ];
   
   fields.forEach(([label, value]) => {
     const row = document.createElement("div");
-    row.style.display = "flex";
-    row.style.justifyContent = "space-between";
-    row.innerHTML = `<span class="rightLabel">${label}</span><span class="rightValue">${value}</span>`;
+    row.classList.add("rightRow");
+
+    const labelSpan = document.createElement("span");
+    labelSpan.classList.add("rightLabel");
+    labelSpan.textContent = label;   // safer than innerHTML
+
+    const valueSpan = document.createElement("span");
+    valueSpan.classList.add("rightValue");
+    valueSpan.textContent = value;   // safer than innerHTML
+
+    row.append(labelSpan, valueSpan);
     right.appendChild(row);
   });
 
@@ -240,7 +262,7 @@ function updateRightPanel() {
   openBtn.disabled = selected_ticket.length === 0;
   openBtn.onclick = () => {
     console.log(selected_index);
-    window.location.replace(`./subpages/ticket_list.html?id=${selected_ticket[0]}&uuid=${uuid}`);
+    window.location.href = `./subpages/ticket_list.html?id=${selected_ticket[0]}`;
   };
 
   right.appendChild(openBtn);
@@ -251,7 +273,7 @@ function add_event() {
     titleName: "Create event",
     contents: [
       [EntryType.TEXT, ["email", "E-mail", ""]], 
-      [EntryType.TEXT, ["date", "Date", "01-01-01"]], 
+      [EntryType.DATE, ["date", "Date", "01-01-01"]], 
       [EntryType.BUTTON, ["button", "Click me", () => {
         editorWindow = window.open("./subpages/ticket_creator.html", "editor", "width=1000,height=800");
       }]]
@@ -262,16 +284,18 @@ function add_event() {
 }
 
 async function add_event_passed(event_name, event_date, event_image) {
-  console.log(event_date, event_name);
-  fetch("https://api.rmjws.cz/v1/customer/${params.get(" + uuid + ")}/add_event", {
+  event_date = new Date(`${event_date}T00:00:00Z`);
+  console.log(event_date);
+  fetch(`https://api.rmjws.cz/v1/customer/add_event`, {
     method: "POST",
+    credentials: "include", // send stored cookies
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      event_name: "" + event_name,
-      event_date: "" + event_date,
-      image: "" + event_image,
+      event_name: event_name.toString(),
+      event_date: event_date.toISOString(),
+      base64_image: event_image.toString(),
     })
   })
   .then(res => {

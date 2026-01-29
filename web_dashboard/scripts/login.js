@@ -28,9 +28,7 @@ async function login() {
             return;
         }
         else {
-            const uuid = await response.text();
-            console.log(uuid);
-            window.location.replace("../?uuid=" + uuid);
+            window.location.href = "../";
         }
 
         console.log("Login successful!");

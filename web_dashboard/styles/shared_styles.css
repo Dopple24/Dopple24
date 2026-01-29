@@ -35,6 +35,8 @@ body {
 margin: 0;
 background: var(--primary-background);
 color: var(--primary-text);
+width: 100vw;
+height: 100vh;
 font-family: system-ui, sans-serif;
 }
 

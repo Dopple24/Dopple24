@@ -8,8 +8,10 @@ const closePopUp = document.getElementById("notification-close");
 const card = document.getElementById("notification-card");
 const payBtn = document.getElementById("pay");
 const emailInput = document.getElementById("email-input");
+const emailVerification = document.getElementById("email-verification");
 
 let email="";
+let email_ver="";
 let unit = 60;
 let heightUnit = 60;
 const MAX_TOTAL_SEATS = 10;
@@ -279,6 +281,10 @@ emailInput.addEventListener("input", () => {
   email = emailInput.value;
 })
 
+emailVerification.addEventListener("input", () => {
+  email_ver = emailVerification.value;
+})
+
 function showNotificationCard(title, message, type = "success") {
   const titleEl = document.getElementById("notification-title");
   const messageEl = document.getElementById("notification-message");
@@ -306,6 +312,10 @@ confirmBtn.addEventListener("click", async () => {
 
   const totalSeats = getTotalSelectedSeats();
 
+  if (email === emailVerification) {
+    alert("NON matching emails");
+    return;
+  }
   if (totalSeats === 0) {
     alert("Please select at least one seat.");
     return;

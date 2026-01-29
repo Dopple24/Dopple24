@@ -319,6 +319,7 @@ button:active {
   color: #ccc;
 }
 
+#email-verification,
 #email-input {
   background: linear-gradient(145deg, #242424, #1c1c1c);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -333,21 +334,25 @@ button:active {
     background 0.15s ease;
 }
 
+#email-verification::placeholder,
 #email-input::placeholder {
   color: #777;
 }
 
+#email-verification,
 #email-input:focus {
   border-color: rgba(76, 175, 80, 0.7);
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.25);
   background: #202020;
 }
 
+#email-verification:invalid,
 #email-input:invalid {
   border-color: rgba(231, 76, 60, 0.7);
   box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.25);
 }
 
+#email-verification:valid,
 #email-input:valid {
   border-color: rgba(76, 175, 80, 0.5);
 }

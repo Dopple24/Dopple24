@@ -10,7 +10,7 @@ submit.onclick = async (event) => {
         const result = await register();
 
         if (result.success) {
-            window.location.replace("./login.html");
+            window.location.href = "./login.html";
         } else {
             console.error(result.message);
             alert(result.message); // or show it in the UI instead
@@ -45,7 +45,7 @@ async function register() {
     } catch {}
 
     switch (response.status) {
-        case 201: 
+        case 200: 
             return {
                 success: true,
                 message: data?.message || "Registration successful"
