@@ -9,8 +9,6 @@ outline: none;
 display: flex;
 height: 40px;
 background: var(--primary-background);
-}
-.header.active {
     padding-right: 15px;
 }
 
@@ -80,4 +78,10 @@ text-overflow: ellipsis;
 
 .cell.selected {
 background: var(--quartiary-background);
+}
+
+@media (max-width:480px)  {
+  .header {
+        padding-right: 0;
+    }
 }
