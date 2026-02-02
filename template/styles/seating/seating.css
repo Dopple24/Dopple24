@@ -86,15 +86,10 @@
 }
 
 
-#seating-header-text {
-  position: absolute;
-  transform: translateX(-50%);
-  left: 50%;
-}
-
 /* ===== App Layout ===== */
-#app {
+.app {
   display: flex;
+  gap: 24px;
   justify-content: center;
   align-items: flex-start;
   padding: 24px;
@@ -110,30 +105,6 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-
-#seating-header {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  position: relative;
-  height: fit-content;
-  height: 70px;
-}
-
-#room-picker {
-  position: absolute;
-  padding: 10px;
-  border-radius: 16px;
-  background: linear-gradient(transparent 59px, rgba(255,255,255,0.04) 60px), linear-gradient(90deg, transparent 59px, rgba(255,255,255,0.04) 60px), var(--bg-room);
-  background-size: 60px 60px;
-  border: 1px solid var(--border-lighter);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), inset 0 10px 40px rgba(0,0,0,0.7);
-  overflow: hidden;
-  /*! margin-right: auto; */
-  left: 0;
-  height: 50px;
-  bottom: 0;
 }
 
 /* ===== Room ===== */
@@ -558,16 +529,6 @@ button:active {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.seating-content {
-  width: 100%;
-  display: flex;
-  display: flex;
-  gap: 24px;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
 #pay:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-pay-hover);
@@ -578,12 +539,6 @@ button:active {
   box-shadow: var(--shadow-pay-active);
 }
 
-h2 {
-  /*! text-align: center; */
-  color: var(--text-light);
-  /*! right: 50%; */
-}
-
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .app {
@@ -591,13 +546,9 @@ h2 {
     align-items: center;
   }
 
-  #seating-header{
-    width: 100%;
-  }
-
   .card,
   .cart-card {
-    min-width: 100%;
+    min-width: 95%;
   }
 
   input[type="range"] {

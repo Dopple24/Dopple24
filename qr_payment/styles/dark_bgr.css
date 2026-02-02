@@ -1,0 +1,8 @@
+body {
+    background-color: #04041e;
+}
+
+* {
+    font-family: system-ui, sans-serif;
+    color: var(--text-light);
+}

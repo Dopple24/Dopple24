@@ -75,7 +75,7 @@ function parseTo2DArray(data) {
 async function render() {
   loader.style.display = "flex";
   console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer/get_events`);
+  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer//get_events`);
   if (result) {
     rows = parseTo2DArray(JSON.parse(result));
     console.log(result, rows);
@@ -286,7 +286,7 @@ function add_event() {
 async function add_event_passed(event_name, event_date, event_image) {
   event_date = new Date(`${event_date}T00:00:00Z`);
   console.log(event_date);
-  fetch(`https://api.rmjws.cz/v1/customer/add_event`, {
+  fetch(`https://api.rmjws.cz/v1/customer//add_event`, {
     method: "POST",
     credentials: "include", // send stored cookies
     headers: {

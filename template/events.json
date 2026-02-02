@@ -1,0 +1,59 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "name": "Rockový Koncert",
+      "price": 500,
+      "currency": "CZK",
+      "description": "Hlasitý večer plný kytar, potu a poctivého rocku.",
+      "long_description": "Rockový Koncert je přesně ten typ večera, po kterém vás bude bolet krk, uši a možná i hlasivky, i když jste jen stáli v davu a občas souhlasně pokyvovali hlavou. Na pódiu se vystřídají české rockové kapely, které mají víc zkušeností než vaše oblíbené džíny a hlasitost nastavenou tak, že si ještě druhý den budete myslet, že vám někdo šeptá do ucha. Čekejte zkreslené kytary, upřímné texty o životě, pivu a existenciálních krizích, a publikum, které ví, že rock se netleská – rock se přežívá. Ideální akce, pokud máte chuť si připomenout, že ticho je přeceňované.",
+      "date": "2026-03-14",
+      "location": "Praha",
+      "image": "image1.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Jak stát vybírá peníze",
+      "price": 420,
+      "currency": "CZK",
+      "description": "Satirická přednáška o daních, poplatcích a nevyhnutelnosti osudu.",
+      "long_description": "Jak stát vybírá peníze je edukativně-zábavný večer, po kterém už se nikdy nebudete dívat na výplatní pásku stejnýma očima. Formou lehce sarkastické přednášky se dozvíte, kam mizí vaše peníze, proč jich nikdy není dost a jak je možné, že stát ví o vašich příjmech dřív než vy sami. Vše je podáno s humorem, nadhledem a jemným pocitem bezmoci, který důvěrně zná každý daňový poplatník. Smích je zaručen, slzy možná taky – hlavně při části věnované DPH. Doporučujeme přijít s otevřenou myslí a zavřenou peněženkou.",
+      "date": "2026-04-02",
+      "location": "Brno",
+      "image": "image2.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Programování s Jeníkem",
+      "price": 890,
+      "currency": "CZK",
+      "description": "Workshop, kde se kód učí srozumitelně, pomalu a s kávou.",
+      "long_description": "Programování s Jeníkem je celodenní workshop, který dokazuje, že i proměnné, cykly a bugy mají smysl, když vám je vysvětluje někdo, kdo ví, že lidé občas zapomínají středník. Jeník vás provede základy i pokročilejšími tématy programování způsobem, který je lidský, trpělivý a občas proložený historkou o tom, jak něco rozbil v produkci. Čekejte praktické ukázky, spoustu dotazů typu „a proč to nefunguje“ a uklidňující odpověď „to je normální“. Ideální akce pro ty, kdo se chtějí učit kódovat bez stresu a s vědomím, že nejste sami, kdo má v kódu chaos.",
+      "date": "2026-06-21",
+      "location": "Ostrava",
+      "image": "image3.png"
+    },
+    {
+      "id": 4,
+      "name": "Stavba webu leteckou rychlostí",
+      "price": 350,
+      "currency": "CZK",
+      "description": "Rychlokurz tvorby webu bez zbytečné teorie.",
+      "long_description": "Stavba webu leteckou rychlostí je intenzivní akce pro všechny, kteří chtějí web dřív, než si rozmyslí, že ho vlastně nepotřebují. Během krátkého času se naučíte poskládat funkční web, aniž byste se museli brodit nekonečnými definicemi a filozofickými debatami o barvě tlačítek. Tempo je svižné, přestávky krátké a výsledek překvapivě použitelný. Pokud jste někdy chtěli říct „udělal jsem si web za odpoledne“ a nelhat u toho, tady máte šanci. Doporučeno pro začátečníky, mírné perfekcionisty a všechny, kdo mají rádi pocit, že věci odsýpají.",
+      "date": "2026-05-10",
+      "location": "Plzeň",
+      "image": "image4.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Černobílí Japonci",
+      "price": 650,
+      "currency": "CZK",
+      "description": "Kulturní večer inspirovaný japonskou estetikou a minimalismem.",
+      "long_description": "Černobílí Japonci je netradiční kulturní zážitek, který kombinuje japonskou estetiku, minimalismus a lehký pocit, že ne všemu musíte rozumět, abyste si to užili. Program se pohybuje na pomezí hudby, vizuálního umění a ticha, které má větší váhu než tisíc slov. Černá a bílá zde nejsou jen barvy, ale životní postoj. Ideální akce pro ty, kdo mají rádi pomalé tempo, hluboké myšlenky a chvíle, kdy si říkáte: „Nevím přesně, co se děje, ale je to zajímavé.“ Doporučujeme přijít bez očekávání a odejít s lehce rozšířeným obzorem.",
+      "date": "2026-07-18",
+      "location": "Olomouc",
+      "image": "image5.jpg"
+    }
+  ]
+}

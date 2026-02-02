@@ -1,0 +1,160 @@
+/* =========================
+   DEFAULT THEME (DARK)
+   ========================= */
+:root {
+  --primary-background: #04041e;
+  --secondary-background: #0a0a2e;
+  --tertiary-background: #12124a;
+  --quartiary-background: #1a1a66;
+
+  --extreme-background: #000015;
+
+  --button: #1f1f7a;
+  --button-hover: #2f2fb3;
+  --button-href: #d47c00;
+
+  --contrast-text: #ffffff;
+  --primary-text: #bbbbbb;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+}
+
+/* Explicit dark theme (mostly redundant, but safe) */
+[data-theme="dark"] {
+  --primary-background: #04041e;
+  --secondary-background: #0b0b30;
+  --tertiary-background: #12124a;
+  --quartiary-background: #1a1a66;
+
+  --extreme-background: #000015;
+
+
+  --button: #23238a;
+  --button-hover: #2f2fb3;
+
+  --contrast-text: #f2f3ff;
+  --primary-text: #c7c9ff;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+}
+
+/* =========================
+   LIGHT THEME
+   ========================= */
+[data-theme="light"] {
+  --primary-background: #f6f7ff;
+  --secondary-background: #dfe2ff;
+  --tertiary-background: #c6caff;
+  --quartiary-background: #adb2ff;
+
+  --extreme-background: #fff;
+
+  --button: #8a90ff;
+  --button-hover: #6f75ff;
+
+  --contrast-text: #04041e;
+  --primary-text: #1a1a3a;
+
+  --border-subtle: rgba(4, 4, 30, 0.08);
+}
+
+/* =========================
+   SYSTEM PREFERENCE (ONLY IF NO THEME SET)
+   ========================= */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --primary-background: #f6f7ff;
+    --secondary-background: #dfe2ff;
+    --tertiary-background: #c6caff;
+    --quartiary-background: #adb2ff;
+
+    --extreme-background: #fff;
+
+    --button: #8a90ff;
+    --button-hover: #6f75ff;
+
+    --contrast-text: #04041e;
+    --primary-text: #1a1a3a;
+
+    --border-subtle: rgba(4, 4, 30, 0.08);
+  }
+}
+
+/* =========================
+   BASE STYLES
+   ========================= */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background: var(--primary-background);
+  color: var(--primary-text);
+
+  font-family: system-ui, sans-serif;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+header {
+  height: 60px;
+  padding: 20px;
+
+  background-color: var(--primary-background);
+  border-bottom: 1px solid var(--border-subtle);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header .logo {
+  height: 100%;
+}
+
+header .buttons {
+  display: flex;
+  gap: 8px;
+  height: 100%;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+header .button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 18px;
+  border-radius: 10px;
+
+  background-color: transparent;
+  color: var(--contrast-text);
+
+  width: 10vw;
+  min-width: 100px;
+
+  font-size: 100%;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+
+  cursor: pointer;
+  text-decoration: none;
+
+  transition:
+    background-color 0.25s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+header .button:hover {
+  background-color: var(--button);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--button) 70%, transparent);
+}

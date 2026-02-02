@@ -62,7 +62,7 @@ function updateTableLabel(el) {
 
 async function fetchSeats() {
   try {
-    const response = await fetch(/*`https://api.rmjws.cz/v1/customer/seats`*/"/qr_payment/seats.json", {
+    const response = await fetch(`https://api.rmjws.cz/v1/public//17355269-b0fb-4108-93b0-d6b05f8f9143/get_seats`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -83,19 +83,11 @@ async function fetchSeats() {
 
 async function init_tables() {
   const json = await fetchSeats();
-  console.log(json);
-  const [firstKey, firstValue] = Object.entries(json.rooms)[0];
-
-  //TODO: Support multiple rooms
-  console.log(firstKey);   // "ground-floor"
-  console.log(firstValue); // { tables:…, obstacles:… }
-
-  const json_tables = firstValue.tables;
-  const json_obstacles = firstValue.obstacles;
+  const json_tables = json.tables;
 
   // Convert object values to an array
   const tableArray = Object.values(json_tables);
-  const obstacleArray = Object.values(json_obstacles);
+  const obstacleArray = Object.values(json.obstacles);
 
   tableArray.forEach(table => {
     if (Number(table.x) + Number(table.w) + 2 > roomWidthUnits) {
@@ -403,7 +395,7 @@ confirmBtn.addEventListener("click", async () => {
   }
 
   const orderID = await fetch(
-      `https://api.rmjws.cz/v1/reserve_seats?${query}`
+      `https://api.rmjws.cz/v1/public/2f3963cb-14ad-4577-aecf-be9db6b98535/reserve_seats?${query}`
       ).then(response => {
         switch (response.status) {
           case 200:

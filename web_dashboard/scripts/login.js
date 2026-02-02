@@ -21,6 +21,7 @@ async function login() {
             credentials: "include" // important for cookies
         });
 
+        console.log("Response:", response.body);
         if (!response.ok) {
             const text = await response.text();
             console.error("Login failed:", text);
@@ -28,7 +29,11 @@ async function login() {
             return;
         }
         else {
-            window.location.href = "../";
+            const uuid = await response.text();
+            console.log(uuid);
+            window.location.replace("../?uuid=" + uuid);
+            
+            //window.location.href = "../";
         }
 
         console.log("Login successful!");
