@@ -1,7 +1,7 @@
 {
   "events": [
     {
-      "id": 1,
+      "id": "17355269-b0fb-4108-93b0-d6b05f8f9143",
       "name": "Rockový Koncert",
       "price": 500,
       "currency": "CZK",
@@ -12,7 +12,7 @@
       "image": "image1.jpg"
     },
     {
-      "id": 2,
+      "id": "17355269-b0fb-4108-93b0-d6b05f8f9143",
       "name": "Jak stát vybírá peníze",
       "price": 420,
       "currency": "CZK",
@@ -23,7 +23,7 @@
       "image": "image2.jpg"
     },
     {
-      "id": 3,
+      "id": "17355269-b0fb-4108-93b0-d6b05f8f9143",
       "name": "Programování s Jeníkem",
       "price": 890,
       "currency": "CZK",
@@ -34,7 +34,7 @@
       "image": "image3.png"
     },
     {
-      "id": 4,
+      "id": "17355269-b0fb-4108-93b0-d6b05f8f9143",
       "name": "Stavba webu leteckou rychlostí",
       "price": 350,
       "currency": "CZK",
@@ -45,7 +45,7 @@
       "image": "image4.jpg"
     },
     {
-      "id": 5,
+      "id": "17355269-b0fb-4108-93b0-d6b05f8f9143",
       "name": "Černobílí Japonci",
       "price": 650,
       "currency": "CZK",

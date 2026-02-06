@@ -12,13 +12,25 @@ const emailVerification = document.getElementById("email-verification");
 const standTickets = document.getElementById("stand-amount");
 const sliderGroup = document.querySelector(".slider-group");
 
-
 const amountInputStand = document.getElementById("stand-amount");
 const amountDisplayStand = document.getElementById("stand-amount-current");
 const amountDisplayMaxStand = document.getElementById("stand-amount-max");
 
-let email="";
-let email_ver="";
+const params = new URLSearchParams(window.location.search);
+
+let event_id = params.get("id");
+
+if (!event_id) {
+  const storedEvent = localStorage.getItem("selectedEvent");
+
+  if (storedEvent) {
+    const event = JSON.parse(storedEvent);
+    event_id = event.id;
+  }
+}
+
+let email = "";
+let email_ver = "";
 let unit = 60;
 let heightUnit = 60;
 const MAX_TOTAL_SEATS = 10;
@@ -35,8 +47,12 @@ let activeTableEl = null;
    Helpers
 ========================= */
 function getTotalSelectedSeats() {
-  return [...document.querySelectorAll(".table")]
-    .reduce((sum, el) => sum + Number(el.dataset.selectedSeats), 0) + Number(standTickets.value);
+  return (
+    [...document.querySelectorAll(".table")].reduce(
+      (sum, el) => sum + Number(el.dataset.selectedSeats),
+      0,
+    ) + Number(standTickets.value)
+  );
 }
 
 function updateTableLabel(el) {
@@ -47,9 +63,10 @@ function updateTableLabel(el) {
   const used = Number(el.dataset.selectedSeats);
   const max = Number(el.dataset.maxSeats);
 
-  el.textContent = used > 0
-    ? `${el.dataset.id} (${used}/${max})`
-    : `${el.dataset.id} (${max})`;
+  el.textContent =
+    used > 0
+      ? `${el.dataset.id} (${used}/${max})`
+      : `${el.dataset.id} (${max})`;
 
   if (used > 0) {
     el.classList.add("checked");
@@ -62,36 +79,39 @@ function updateTableLabel(el) {
 
 async function fetchSeats() {
   try {
-    const response = await fetch(`https://api.rmjws.cz/v1/public//17355269-b0fb-4108-93b0-d6b05f8f9143/get_seats`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    }
-  })
-  .then(res => {
-    console.log(res);
-    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+    const response = await fetch(
+      `http://localhost:6870/public/${event_id}/seats`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    ).then((res) => {
+      console.log(res);
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
-    return res.json();
-  });
+      return res.json();
+    });
     return response;
   } catch (err) {
     console.error("Fetch error:", err);
   }
 }
 
-
 async function init_tables() {
-  const json = await fetchSeats();
+  const json = JSON.parse(await fetchSeats());
+  console.log(json);
   const json_tables = json.tables;
+  console.log(json_tables);
 
   // Convert object values to an array
   const tableArray = Object.values(json_tables);
   const obstacleArray = Object.values(json.obstacles);
 
-  tableArray.forEach(table => {
+  tableArray.forEach((table) => {
     if (Number(table.x) + Number(table.w) + 2 > roomWidthUnits) {
-      roomWidthUnits = Number(table.x) + Number(table.w) + 2
+      roomWidthUnits = Number(table.x) + Number(table.w) + 2;
     }
     if (Number(table.y) + Number(table.h) + 2 > roomHeightUnits) {
       roomHeightUnits = Number(table.y) + Number(table.h) + 2;
@@ -102,14 +122,14 @@ async function init_tables() {
       y: table.y,
       w: table.w,
       h: table.h,
-      seats: table.seats - table.reservedSeats,
+      seats: table.seats - table.reserved_seats,
       price: table.price,
     });
   });
 
-  obstacleArray.forEach(obstacle => {
+  obstacleArray.forEach((obstacle) => {
     if (Number(obstacle.x) + Number(obstacle.w) + 2 > roomWidthUnits) {
-      roomWidthUnits = Number(obstacle.x) + Number(obstacle.w) + 2
+      roomWidthUnits = Number(obstacle.x) + Number(obstacle.w) + 2;
     }
     if (Number(obstacle.y) + Number(obstacle.h) + 2 > roomHeightUnits) {
       roomHeightUnits = Number(obstacle.y) + Number(obstacle.h) + 2;
@@ -125,7 +145,6 @@ async function init_tables() {
 
   unit = (room.clientWidth || 700) / roomWidthUnits;
   heightUnit = (room.clientHeight || 420) / roomHeightUnits;
-
 }
 
 /* =========================
@@ -173,13 +192,12 @@ function createObstacle(obstacle) {
     Cart logic
 ========================= */
 function renderCart(doesStand = false, standPrice) {
-  
   // Get all table elements in the DOM
   const tableEls = document.querySelectorAll(".table");
 
   // Filter only tables with selected seats
   let selectedTables = [...tableEls].filter(
-    el => Number(el.dataset.selectedSeats) > 0
+    (el) => Number(el.dataset.selectedSeats) > 0,
   );
 
   // Add stand tickets to selected tables count
@@ -189,8 +207,8 @@ function renderCart(doesStand = false, standPrice) {
         dataset: {
           id: "Stand Tickets",
           price: standPrice,
-          selectedSeats: standTickets.value
-        }
+          selectedSeats: standTickets.value,
+        },
       };
       selectedTables.push(standTable);
     }
@@ -235,7 +253,8 @@ function renderCart(doesStand = false, standPrice) {
   }
 
   // Update total
-  document.getElementById("cart-total").textContent = `${cartCost.toFixed(2)} Kč`;
+  document.getElementById("cart-total").textContent =
+    `${cartCost.toFixed(2)} Kč`;
 }
 
 /* =========================
@@ -259,7 +278,10 @@ function activateTable(el) {
   }
 
   // Check if max seats reached
-  if (getTotalSelectedSeats() >= MAX_TOTAL_SEATS && Number(el.dataset.selectedSeats) === 0) {
+  if (
+    getTotalSelectedSeats() >= MAX_TOTAL_SEATS &&
+    Number(el.dataset.selectedSeats) === 0
+  ) {
     alert(`You can select a maximum of ${MAX_TOTAL_SEATS} seats.`);
     return;
   }
@@ -284,18 +306,27 @@ function activateTable(el) {
 function updateCounts() {
   if (!activeTableEl) {
     sliderGroup.style.display = "none";
-  }
-  else {
+  } else {
     sliderGroup.style.display = "flex";
-    const remainingSeats = MAX_TOTAL_SEATS - getTotalSelectedSeats() + Number(activeTableEl.dataset.selectedSeats);
+    const remainingSeats =
+      MAX_TOTAL_SEATS -
+      getTotalSelectedSeats() +
+      Number(activeTableEl.dataset.selectedSeats);
     amountInput.min = 1;
     amountInput.max = Math.min(activeTableEl.dataset.maxSeats, remainingSeats);
-    amountDisplayMax.textContent = Math.min(activeTableEl.dataset.maxSeats, remainingSeats);
+    amountDisplayMax.textContent = Math.min(
+      activeTableEl.dataset.maxSeats,
+      remainingSeats,
+    );
   }
-  const remainingSeatsStand = MAX_TOTAL_SEATS - getTotalSelectedSeats() + Number(amountInputStand.value);
+  const remainingSeatsStand =
+    MAX_TOTAL_SEATS - getTotalSelectedSeats() + Number(amountInputStand.value);
   amountInputStand.min = 0;
   amountInputStand.max = remainingSeatsStand;
-  amountInputStand.value = remainingSeatsStand < amountInputStand.value ? remainingSeatsStand : amountInputStand.value;
+  amountInputStand.value =
+    remainingSeatsStand < amountInputStand.value
+      ? remainingSeatsStand
+      : amountInputStand.value;
 }
 
 /* =========================
@@ -323,7 +354,6 @@ amountInputStand.addEventListener("input", () => {
   amountDisplayStand.textContent = amountInputStand.value || 0;
 
   updateCounts();
-  
 
   if (getTotalSelectedSeats() > MAX_TOTAL_SEATS) {
     alert(`You can select a maximum of ${MAX_TOTAL_SEATS} seats.`);
@@ -336,11 +366,11 @@ amountInputStand.addEventListener("input", () => {
 
 emailInput.addEventListener("input", () => {
   email = emailInput.value;
-})
+});
 
 emailVerification.addEventListener("input", () => {
   email_ver = emailVerification.value;
-})
+});
 
 function showNotificationCard(title, message, type = "success") {
   const titleEl = document.getElementById("notification-title");
@@ -353,19 +383,24 @@ function showNotificationCard(title, message, type = "success") {
 
 closePopUp.addEventListener("click", () => {
   card.className = `notification-card hidden`;
-})
+});
 
 payBtn.addEventListener("click", () => {
   const order = JSON.parse(localStorage.getItem("order"));
-  window.location.href = "/qr_payment/subpages/iframe_tester.html?order_id=" + encodeURIComponent(order.id);
-})
+  window.location.href =
+    "../../qr_payment/subpages/iframe_tester.html?order_id=" +
+    encodeURIComponent(order.id) +
+    "&event_id=" +
+    encodeURIComponent(event_id);
+});
 
 /* =========================
    Confirm
 ========================= */
 confirmBtn.addEventListener("click", async () => {
-  const selectedTables = [...document.querySelectorAll(".table")]
-    .filter(el => Number(el.dataset.selectedSeats) > 0);
+  const selectedTables = [...document.querySelectorAll(".table")].filter(
+    (el) => Number(el.dataset.selectedSeats) > 0,
+  );
 
   const totalSeats = getTotalSelectedSeats();
 
@@ -386,59 +421,72 @@ confirmBtn.addEventListener("click", async () => {
     return;
   }
 
-  let query = `email=${email}&`;
+  const seats = {};
   for (const el of selectedTables) {
-    query = query + `${el.dataset.id}=${el.dataset.selectedSeats}&`;
+    seats[el.dataset.id] = Number(el.dataset.selectedSeats);
     el.dataset.selectedSeats = 0;
     el.classList.remove("selected");
     el.classList.remove("checked");
   }
 
   const orderID = await fetch(
-      `https://api.rmjws.cz/v1/public/2f3963cb-14ad-4577-aecf-be9db6b98535/reserve_seats?${query}`
-      ).then(response => {
-        switch (response.status) {
-          case 200:
-            console.log("Success!");
-            return response.text(); // or .text(), depending on your response type
-          case 400:
-            console.error("Bad request: Table not found");
-            break;
-          case 500:
-            console.error("Internal server error");
-            break;
-          default:
-            console.warn("Unexpected status:", response.status);
-        }
-      })
-      .catch(error => {
-        console.error("Network or fetch error:", error);
-      });
+    `http://localhost:6870/public/${params.get("id")}/reserve_seats`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        ...seats,
+      }),
+    },
+  )
+    .then((response) => {
+      switch (response.status) {
+        case 200:
+          console.log("Success!");
+          return response.text(); // or .text(), depending on your response type
+        case 400:
+          console.error("Bad request: Table not found");
+          break;
+        case 500:
+          console.error("Internal server error");
+          break;
+        default:
+          console.warn("Unexpected status:", response.status);
+      }
+    })
+    .catch((error) => {
+      console.error("Network or fetch error:", error);
+    });
 
-  const order = { id: orderID};
-  localStorage.setItem('order', JSON.stringify(order));
-  showNotificationCard("Success", "Your order ID: <strong>" + orderID + "</strong>", "success");
+  const order = { id: orderID };
+  localStorage.setItem("order", JSON.stringify(order));
+  showNotificationCard(
+    "Success",
+    "Your order ID: <strong>" + orderID + "</strong>",
+    "success",
+  );
 
   await init_tables();
-  tables.forEach(table => {
+  tables.forEach((table) => {
     room.appendChild(createTable(table));
   });
 });
-
-
 
 /* =========================
    Init
 ========================= */
 await init_tables();
 
-tables.forEach(table => {
+tables.forEach((table) => {
   room.appendChild(createTable(table));
 });
 
-obstacles.forEach(obstacle => {
+obstacles.forEach((obstacle) => {
   room.appendChild(createObstacle(obstacle));
-})
+});
 
 updateCounts();
-

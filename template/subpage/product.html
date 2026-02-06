@@ -1,110 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="cs">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product Page</title>
-    <link rel="stylesheet" href="../styles/shared.css" />
-    <link rel="stylesheet" href="../styles/product.css" />
-    <link rel="stylesheet" href="../styles/seating/seating.css">
-  </head>
-  <body>
-    <header>
-        <img src="../assets/RMJ_dark.svg" alt="Logo" class="logo" />
-        <div class="buttons">
-            <a href="../index.html" class="button">Home</a>
-            <span class="button">Seating</span>
-            <span class="button">Contact</span>
-        </div>
-    </header>
-    <main>
-        <div class="product-container">
-            <div class="gallery">
-                <img src="../assets/image.jpg" alt="Product Image" class="product-image" />
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Product Page</title>
+        <link rel="stylesheet" href="../styles/shared.css" />
+        <link rel="stylesheet" href="../styles/product.css" />
+        <link rel="stylesheet" href="../styles/seating/seating.css" />
+    </head>
+    <body>
+        <header>
+            <img src="../assets/RMJ_dark.svg" alt="Logo" class="logo" />
+            <div class="buttons">
+                <a href="../index.html" class="button">Home</a>
+                <span class="button">Seating</span>
+                <span class="button">Contact</span>
             </div>
-            <div class="product-text">
-                <div class="product-details">
-                    <h1 class="product-title">Rockový Koncert</h1>
-                    <p class="product-description">
-                        Užijte si večer plný rockové hudby s nejlepšími kapelami. Tento
-                        koncert nabízí nezapomenutelný zážitek pro všechny fanoušky rocku.
-                    </p>
-                    <p class="product-date">01-01-01</p>
-                    <div id="ticket-amount">
-                        <label for="ticket-quantity">Počet vstupenek:</label>
-                        <input type="number" id="ticket-quantity" min="1" max="10" value="1" />
-                    </div>
-                    <p class="product-price">Cena: 500 Kč</p>
-                    <a href="#app" class="buy-button">Koupit Vstupenku</a>
+        </header>
+        <main>
+            <div class="product-container">
+                <div class="gallery">
+                    <img
+                        src="../assets/image.jpg"
+                        alt="Product Image"
+                        class="product-image"
+                    />
                 </div>
-            </div>
-        </div>
-
-        <h2 id="app">Vyberte si místo na sezení</h2>
-        <!--<h1>Seating Arrangement</h1>-->
-        <div class="app">
-            <div class="card">  
-                <div id="room"></div>
-
-                <div class="controls">
-                <div class="slider-group">
-                    <span class="slider-label">Seats</span>
-                    <input type="range" id="amount" min="1" max="8" value="1">
-                    <div class="range-display">
-                    <span id="amount-current">1</span>/<span id="amount-max">8</span>
+                <div class="product-text">
+                    <div class="product-details">
+                        <h1 class="product-title">Rockový Koncert</h1>
+                        <p class="product-description">
+                            Užijte si večer plný rockové hudby s nejlepšími
+                            kapelami. Tento koncert nabízí nezapomenutelný
+                            zážitek pro všechny fanoušky rocku.
+                        </p>
+                        <p class="product-date">01-01-01</p>
+                        <div id="ticket-amount">
+                            <label for="ticket-quantity"
+                                >Počet vstupenek:</label
+                            >
+                            <input
+                                type="number"
+                                id="ticket-quantity"
+                                min="1"
+                                max="10"
+                                value="1"
+                            />
+                        </div>
+                        <p class="product-price">Cena: 500 Kč</p>
+                        <a href="#app" class="buy-button">Koupit Vstupenku</a>
                     </div>
-                </div>
-                <button id="confirm">Objednat</button>
                 </div>
             </div>
 
-            <div class="right">
-                <div class="cart-card">
-                    <h2>Number of tickets to stand</h2>
-                    <div class="slider-group">
-                    <span class="slider-label">Tickets</span>
-                    <input type="range" id="stand-amount" min="0" max="10" value="0">
-                    <div class="range-display">
-                    <span id="stand-amount-current">0</span>/<span id="stand-amount-max">10</span>
+            <h2 id="app">Vyberte si místo na sezení</h2>
+            <!--<h1>Seating Arrangement</h1>-->
+            <div class="app">
+                <div class="card">
+                    <div id="room"></div>
+
+                    <div class="controls">
+                        <div class="slider-group">
+                            <span class="slider-label">Seats</span>
+                            <input
+                                type="range"
+                                id="amount"
+                                min="1"
+                                max="8"
+                                value="1"
+                            />
+                            <div class="range-display">
+                                <span id="amount-current">1</span>/<span
+                                    id="amount-max"
+                                    >8</span
+                                >
+                            </div>
+                        </div>
+                        <button id="confirm">Objednat</button>
                     </div>
                 </div>
+
+                <div class="right">
+                    <div class="cart-card" id="ticket-to-stand-while-sitting">
+                        <h2>Number of tickets to stand</h2>
+                        <div class="slider-group">
+                            <span class="slider-label">Tickets</span>
+                            <input
+                                type="range"
+                                id="stand-amount"
+                                min="0"
+                                max="10"
+                                value="0"
+                            />
+                            <div class="range-display">
+                                <span id="stand-amount-current">0</span>/<span
+                                    id="stand-amount-max"
+                                    >10</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shopping Cart Panel -->
+                    <div class="cart-card">
+                        <h2>Selected Tables</h2>
+                        <ul id="cart-list">
+                            <!-- Selected tables will appear here dynamically -->
+                        </ul>
+                        <div class="email-input-card">
+                            <h2>Your email:</h2>
+                            <input
+                                id="email-input"
+                                type="email"
+                                placeholder="your@email.com"
+                            />
+                            <h2>Email verification:</h2>
+                            <input
+                                id="email-verification"
+                                type="ver_email"
+                                placeholder="your@email.com"
+                            />
+                        </div>
+                        <div class="cart-total">
+                            <span>Total</span>
+                            <strong id="cart-total">0.00 Kč</strong>
+                        </div>
+                    </div>
                 </div>
-            
-                <!-- Shopping Cart Panel -->
-            <div class="cart-card">
-                <h2>Selected Tables</h2>
-                <ul id="cart-list">
-                <!-- Selected tables will appear here dynamically -->
-                </ul>
-                <div class="email-input-card">
-                <h2>Your email:</h2>
-                <input id="email-input" type="email" placeholder="your@email.com">
-                <h2>Email verification:</h2>
-                <input id="email-verification" type="ver_email" placeholder="your@email.com">
-                </div>
-                <div class="cart-total">
-                <span>Total</span>
-                <strong id="cart-total">0.00 Kč</strong>
-                </div>
-            </div>
-            </div>
-            
             </div>
             <!-- Notification Card -->
             <div id="notification-card" class="notification-card hidden">
-            <div class="notification-header">
-                <span id="notification-title">Success</span>
-                <button id="notification-close">&times;</button>
-            </div>
+                <div class="notification-header">
+                    <span id="notification-title">Success</span>
+                    <button id="notification-close">&times;</button>
+                </div>
 
-            <div id="notification-message" class="notification-message">
-                Your order ID: <strong>12345</strong>
-            </div>
+                <div id="notification-message" class="notification-message">
+                    Your order ID: <strong>12345</strong>
+                </div>
 
-            <button id="pay">Pay</button>
-        </div>
-        <script src="../scripts/product.js" defer></script>
-        <script type="module" src="../scripts//seating/seating.js" defer></script>
-    </main>
-  </body>
+                <button id="pay">Pay</button>
+            </div>
+            <script src="../scripts/product.js" defer></script>
+            <script
+                type="module"
+                src="../scripts//seating/seating.js"
+                defer
+            ></script>
+            <script type="module">
+                import { loadEvent } from "../scripts/product.js";
+
+                loadEvent(true, true); //loadEvent(tickets_to_stand, tickets_to_sit)
+            </script>
+        </main>
+    </body>
 </html>
