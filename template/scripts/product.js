@@ -24,7 +24,7 @@ export async function loadEvent(stand = true, sit = true) {
     event === null ||
     event.id != new URLSearchParams(window.location.search).get("id")
   ) {
-    const response = await fetch("../template/events.json");
+    const response = await fetch("../events.json");
     const data = await response.json();
 
     const events = data.events;

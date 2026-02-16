@@ -1,3 +1,5 @@
+import { API_URL } from "./config.js";
+
 const submit = document.getElementById("login-btn");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
@@ -26,7 +28,7 @@ async function register() {
     return { success: false, message: "Passwords do not match." };
   }
 
-  const response = await fetch("http://127.0.0.1:6870/register", {
+  const response = await fetch(`${API_URL}/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

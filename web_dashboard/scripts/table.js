@@ -1,4 +1,7 @@
-export function renderTable(container, { titles, rows, disabled = false, onSelect, selectedIndex = -1 }) {
+export function renderTable(
+  container,
+  { titles, rows, disabled = false, onSelect, selectedIndex = -1 },
+) {
   container.innerHTML = ""; // clear previous table
 
   const table = document.createElement("div");
@@ -9,7 +12,7 @@ export function renderTable(container, { titles, rows, disabled = false, onSelec
   const header = document.createElement("div");
   header.className = "header";
 
-  titles.forEach(title => {
+  titles.forEach((title) => {
     const cell = document.createElement("div");
     cell.className = "header-cell";
     cell.textContent = title;
@@ -34,7 +37,14 @@ export function renderTable(container, { titles, rows, disabled = false, onSelec
 
       if (i === selectedIndex) rowEl.classList.add("selected");
 
-      row.forEach(cell => {
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "copy-btn";
+      copyBtn.textContent = "📑";
+      copyBtn.onclick = () => copy(row[0]);
+
+      rowEl.appendChild(copyBtn);
+
+      row.forEach((cell) => {
         const cellEl = document.createElement("div");
         cellEl.className = "cell";
         cellEl.textContent = cell;
@@ -68,7 +78,7 @@ export function renderTable(container, { titles, rows, disabled = false, onSelec
 
   // ---- Keyboard navigation ----
   table.tabIndex = 0; // make table focusable
-  table.addEventListener("keydown", e => {
+  table.addEventListener("keydown", (e) => {
     if (disabled || rows.length === 0) return;
 
     if (e.key === "ArrowUp") {
@@ -91,4 +101,26 @@ export function renderTable(container, { titles, rows, disabled = false, onSelec
       e.preventDefault();
     }
   });
+}
+
+function copy(text) {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      showToast("📋 Copied to clipboard");
+    })
+    .catch(() => {
+      showToast("❌ Failed to copy");
+    });
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
 }

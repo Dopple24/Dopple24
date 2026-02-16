@@ -1,3 +1,5 @@
+import { API_URL } from "./config.js";
+
 import { renderTable } from "./table.js";
 import { showYeller, EntryType, showMailChanger } from "./reassurer.js";
 
@@ -35,7 +37,7 @@ async function fetchBlockingJson(url) {
       method: "GET",
       credentials: "include",
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
       },
     });
 
@@ -46,13 +48,13 @@ async function fetchBlockingJson(url) {
     const data = await response.json();
     return data;
   } catch (err) {
-    console.error('Fetch failed:', err);
+    console.error("Fetch failed:", err);
     return null;
   }
 }
 
 async function editMail(index, new_email, database_id) {
-  const response = await fetch("https://api.rmjws.cz/v1/customer/edit_mail", {
+  const response = await fetch(`${API_URL}/customer/edit_mail`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -61,54 +63,55 @@ async function editMail(index, new_email, database_id) {
     body: JSON.stringify({
       index: index,
       new_email: new_email,
-      database_id: database_id
+      database_id: database_id,
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Request failed");
+      return res.json(); // or res.text()
     })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Request failed");
-    return res.json(); // or res.text()
-  })
-  .then(data => console.log("Server response:", data))
-  .catch(err => console.error("Error:", err));
+    .then((data) => console.log("Server response:", data))
+    .catch((err) => console.error("Error:", err));
 }
 
-function parseTo2DArray(data){
+function parseTo2DArray(data) {
   if (data && Array.isArray(data)) {
-    return data.map(obj => [
-      obj.id,
+    console.log(data);
+    return data.map((obj) => [
+      obj.ticket_id,
       obj.price + " Kč",
-      obj.email,
+      obj.address,
       obj.date,
-      obj.status
+      obj.is_intruder ? "deleted" : "valid",
     ]);
   }
 }
 
 // Usage:
 async function render() {
-  rows =[[]];
+  rows = [[]];
   loader.style.display = "flex";
-  console.log('Fetching...');
-  const result = await fetchBlockingJson(`https://api.rmjws.cz/v1/customer/get_database/${params.get("id")}`);
+  console.log("Fetching...");
+  const result = await fetchBlockingJson(
+    `${API_URL}/customer/get_database/${params.get("id")}`,
+  );
+  console.log(result);
   if (result) {
     rows = parseTo2DArray(result.tickets);
-    console.log('set')
-  }
-  else {
+    console.log(rows);
+  } else {
     alert("failed to fetch data");
     rows = rows_default;
   }
-  
+
   selected_ticket = [];
   selected_index = -1;
   renderUI();
   loader.style.display = "none";
-
 }
 
 const params = new URLSearchParams(window.location.search);
 const database_id = params.get("id");
-
 
 let selected_ticket = [];
 let selected_index = -1;
@@ -117,11 +120,13 @@ let should_yell = false;
 
 const app = document.getElementById("app");
 
-function leave() { 
+function leave() {
   window.location.replace("../index.html");
 }
 
-function refresh() { render(); }
+function refresh() {
+  render();
+}
 async function edit_email(index, newEmail) {
   try {
     // Wait for server response before updating UI
@@ -132,7 +137,7 @@ async function edit_email(index, newEmail) {
     rows[index][2] = newEmail;
     render();
   } catch (err) {
-    console.error('Failed to edit email:', err);
+    console.error("Failed to edit email:", err);
   }
 }
 function resend_email(index) {
@@ -147,12 +152,17 @@ function renderUI() {
 
   const currentTheme =
     document.documentElement.getAttribute("data-theme") ||
-    (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    (window.matchMedia("(prefers-color-scheme: light)").matches
+      ? "light"
+      : "dark");
 
   const top = document.createElement("div");
   top.className = "topbar";
   const logo = document.createElement("img");
-  logo.src = currentTheme === "light" ? "../assets/RMJ_light.svg" : "../assets/RMJ_dark.svg";
+  logo.src =
+    currentTheme === "light"
+      ? "../assets/RMJ_light.svg"
+      : "../assets/RMJ_dark.svg";
   console.log(currentTheme);
 
   top.appendChild(logo);
@@ -160,7 +170,7 @@ function renderUI() {
   // Main
   const main = document.createElement("div");
   main.className = "main";
-  
+
   const loader = document.createElement("img");
   loader.src = "../assets/RMJ_dark copy.svg";
   loader.id = "loader";
@@ -192,14 +202,14 @@ function renderUI() {
 
   renderTable(center, {
     titles,
-  rows,
-  disabled: paused || should_yell,
-  selectedIndex: selected_index, // pass selected index
+    rows,
+    disabled: paused || should_yell,
+    selectedIndex: selected_index, // pass selected index
     onSelect(ticket, index) {
-        selected_ticket = ticket;
-        selected_index = index;
-        updateRightPanel();
-    }
+      selected_ticket = ticket;
+      selected_index = index;
+      updateRightPanel();
+    },
   });
 
   right = document.createElement("div");
@@ -210,45 +220,46 @@ function renderUI() {
   main.appendChild(right);
   main.append(loader);
 
-
   root.appendChild(top);
   root.appendChild(main);
   app.appendChild(root);
 
   updateRightPanel();
-  
-  const scrollElement = document.querySelector('.scroll');
-  const header = document.querySelector('.header');
+
+  const scrollElement = document.querySelector(".scroll");
+  const header = document.querySelector(".header");
 
   if (scrollElement.scrollHeight > scrollElement.clientHeight) {
-    header.classList.add("active");   // add the class
+    header.classList.add("active"); // add the class
   } else {
-    header.classList.remove("active"); // remove the class 
+    header.classList.remove("active"); // remove the class
   }
 
   if (paused) {
     showMailChanger({
-        titleName: "change email",
-        contents: [[EntryType.TEXT, ["email", "e-mail:", selected_ticket[2] || ""]]],
-        onConfirm(email) {
-          paused = false;
-          edit_email(parseInt(selected_ticket[0]), email[0]); // edit_email already calls render()
-        },
-        onCancel() {
-          paused = false;
-          renderUI(); // render once
-        }
+      titleName: "change email",
+      contents: [
+        [EntryType.TEXT, ["email", "e-mail:", selected_ticket[2] || ""]],
+      ],
+      onConfirm(email) {
+        paused = false;
+        edit_email(parseInt(selected_ticket[0]), email[0]); // edit_email already calls render()
+      },
+      onCancel() {
+        paused = false;
+        renderUI(); // render once
+      },
     });
   }
-  
+
   if (should_yell) {
     showYeller({
-        reassure_text: `This will send an email to ${selected_ticket[2]} with ticket ${selected_ticket[0]}. Are you sure?`,
-        onResponse(answer) {
-          should_yell = false;
-          if (answer) resend_email(selected_index); // can call render inside
-          renderUI(); // render once to update UI
-        }
+      reassure_text: `This will send an email to ${selected_ticket[2]} with ticket ${selected_ticket[0]}. Are you sure?`,
+      onResponse(answer) {
+        should_yell = false;
+        if (answer) resend_email(selected_index); // can call render inside
+        renderUI(); // render once to update UI
+      },
     });
   }
 }
@@ -279,9 +290,6 @@ function updateRightPanel() {
     right.appendChild(row);
   });
 
-
-
-  
   const editBtn = document.createElement("button");
   editBtn.textContent = "edit e-mail";
   editBtn.disabled = selected_ticket.length === 0;
@@ -299,14 +307,13 @@ function updateRightPanel() {
   };
 
   const deleteBtn = document.createElement("button");
-  console.log(selected_ticket[4]);
-  deleteBtn.textContent = selected_ticket[4] == "deleted" ? "revive ticket" : "delete ticket";
+  deleteBtn.textContent =
+    selected_ticket[4] == "deleted" ? "revive ticket" : "delete ticket";
   deleteBtn.disabled = selected_ticket.length === 0;
   deleteBtn.onclick = () => {
-    delete_ticket()
+    delete_ticket();
     renderUI();
   };
-
 
   right.appendChild(editBtn);
   right.appendChild(resendBtn);
@@ -317,17 +324,17 @@ function create_ticket() {
   showMailChanger({
     titleName: "manually add a ticket",
     contents: [
-      [EntryType.TEXT, ["text", "seat", ""]], 
-      [EntryType.TEXT, ["number", "price", ""]], 
-      [EntryType.TEXT, ["email", "email", ""]]
+      [EntryType.TEXT, ["text", "seat", ""]],
+      [EntryType.TEXT, ["number", "price", ""]],
+      [EntryType.TEXT, ["email", "email", ""]],
     ],
     onConfirm: ([seat, price, email]) => post_create_ticket(seat, price, email),
-    onCancel: () => console.log("Cancelled")
+    onCancel: () => console.log("Cancelled"),
   });
 }
 
 async function post_create_ticket(seat = null, price = null, address = null) {
-  fetch("https://api.rmjws.cz/v1/customer/create_ticket", {
+  fetch(`${API_URL}/customer/create_ticket`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -338,34 +345,34 @@ async function post_create_ticket(seat = null, price = null, address = null) {
       seat: seat,
       price: parseInt(price),
       address: address,
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Request failed");
+      return res.json(); // or res.text()
     })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Request failed");
-    return res.json(); // or res.text()
-  })
-  .then(refresh())
-  .catch(err => console.error("Error:", err));
+    .then(refresh())
+    .catch((err) => console.error("Error:", err));
 }
 
 async function delete_ticket() {
-  fetch("https://api.rmjws.cz/v1/customer/toggle_ticket", {
+  fetch(`${API_URL}/customer/toggle_ticket`, {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      database_id: database_id,
-      index: parseInt(selected_ticket[0]),
+      event_id: database_id,
+      ticket_id: selected_ticket[0],
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Request failed");
+      return res.json(); // or res.text()
     })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Request failed");
-    return res.json(); // or res.text()
-  })
-  .then(refresh())
-  .catch(err => console.error("Error:", err));
+    .then(refresh())
+    .catch((err) => console.error("Error:", err));
 }
 
 renderUI();

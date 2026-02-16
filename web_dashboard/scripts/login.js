@@ -1,3 +1,4 @@
+import { API_URL } from "./config.js";
 const submit = document.getElementById("login-btn");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
@@ -9,7 +10,7 @@ submit.onclick = (event) => {
 
 async function login() {
   try {
-    const response = await fetch("http://127.0.0.1:6870/login", {
+    const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-const room = document.getElementById("room");
+const roomApp = document.getElementById("room");
 const amountInput = document.getElementById("amount");
 const amountDisplay = document.getElementById("amount-current");
 const amountDisplayMax = document.getElementById("amount-max");
@@ -17,6 +17,8 @@ const amountDisplayStand = document.getElementById("stand-amount-current");
 const amountDisplayMaxStand = document.getElementById("stand-amount-max");
 
 const params = new URLSearchParams(window.location.search);
+
+const roomPicker = document.getElementById("room-picker");
 
 let event_id = params.get("id");
 
@@ -38,8 +40,10 @@ const MAX_TOTAL_SEATS = 10;
 let roomWidthUnits = 2;
 let roomHeightUnits = 2;
 
-const tables = [];
-const obstacles = [];
+let rooms = [];
+let tables = [];
+let obstacles = [];
+let activeRoom = 0;
 
 let activeTableEl = null;
 
@@ -47,12 +51,15 @@ let activeTableEl = null;
    Helpers
 ========================= */
 function getTotalSelectedSeats() {
-  return (
-    [...document.querySelectorAll(".table")].reduce(
-      (sum, el) => sum + Number(el.dataset.selectedSeats),
-      0,
-    ) + Number(standTickets.value)
-  );
+  const seatsFromTables = rooms.reduce((roomSum, room) => {
+    const tableSum = room.tables
+      .filter((table) => table.selectedSeats > 0)
+      .reduce((sum, table) => sum + Number(table.selectedSeats), 0);
+
+    return roomSum + tableSum;
+  }, 0);
+
+  return seatsFromTables + Number(standTickets.value);
 }
 
 function updateTableLabel(el) {
@@ -60,13 +67,14 @@ function updateTableLabel(el) {
     renderCart(true, 300);
     return;
   }
-  const used = Number(el.dataset.selectedSeats);
-  const max = Number(el.dataset.maxSeats);
+  let tableToUpdate = getTable(el.id);
+  const used = Number(tableToUpdate.selectedSeats);
+  const max = Number(tableToUpdate.seats);
 
   el.textContent =
     used > 0
-      ? `${el.dataset.id} (${used}/${max})`
-      : `${el.dataset.id} (${max})`;
+      ? `${tableToUpdate.id} (${used}/${max})`
+      : `${tableToUpdate.id} (${max})`;
 
   if (used > 0) {
     el.classList.add("checked");
@@ -88,7 +96,6 @@ async function fetchSeats() {
         },
       },
     ).then((res) => {
-      console.log(res);
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       return res.json();
@@ -101,50 +108,59 @@ async function fetchSeats() {
 
 async function init_tables() {
   const json = JSON.parse(await fetchSeats());
-  console.log(json);
-  const json_tables = json.tables;
-  console.log(json_tables);
+  roomPicker.innerHTML = "";
+  activeRoom = 0;
+  Object.values(json).forEach((room) => {
+    tables = [];
+    obstacles = [];
+    let place = document.createElement("option");
+    place.value = room.name;
+    place.text = room.name;
+    roomPicker.appendChild(place);
 
-  // Convert object values to an array
-  const tableArray = Object.values(json_tables);
-  const obstacleArray = Object.values(json.obstacles);
+    // Convert object values to an array
+    const tableArray = Object.values(room.tables);
+    const obstacleArray = Object.values(room.obstacles);
 
-  tableArray.forEach((table) => {
-    if (Number(table.x) + Number(table.w) + 2 > roomWidthUnits) {
-      roomWidthUnits = Number(table.x) + Number(table.w) + 2;
-    }
-    if (Number(table.y) + Number(table.h) + 2 > roomHeightUnits) {
-      roomHeightUnits = Number(table.y) + Number(table.h) + 2;
-    }
-    tables.push({
-      id: table.id,
-      x: table.x,
-      y: table.y,
-      w: table.w,
-      h: table.h,
-      seats: table.seats - table.reserved_seats,
-      price: table.price,
+    tableArray.forEach((table) => {
+      if (Number(table.x) + Number(table.w) + 2 > roomWidthUnits) {
+        roomWidthUnits = Number(table.x) + Number(table.w) + 2;
+      }
+      if (Number(table.y) + Number(table.h) + 2 > roomHeightUnits) {
+        roomHeightUnits = Number(table.y) + Number(table.h) + 2;
+      }
+      tables.push({
+        id: table.id,
+        x: table.x,
+        y: table.y,
+        w: table.w,
+        h: table.h,
+        seats: table.seats - table.reserved_seats,
+        selectedSeats: 0,
+        price: table.price,
+        room: room.name,
+      });
     });
-  });
 
-  obstacleArray.forEach((obstacle) => {
-    if (Number(obstacle.x) + Number(obstacle.w) + 2 > roomWidthUnits) {
-      roomWidthUnits = Number(obstacle.x) + Number(obstacle.w) + 2;
-    }
-    if (Number(obstacle.y) + Number(obstacle.h) + 2 > roomHeightUnits) {
-      roomHeightUnits = Number(obstacle.y) + Number(obstacle.h) + 2;
-    }
-    obstacles.push({
-      id: obstacle.id,
-      x: obstacle.x,
-      y: obstacle.y,
-      w: obstacle.w,
-      h: obstacle.h,
+    obstacleArray.forEach((obstacle) => {
+      if (Number(obstacle.x) + Number(obstacle.w) + 2 > roomWidthUnits) {
+        roomWidthUnits = Number(obstacle.x) + Number(obstacle.w) + 2;
+      }
+      if (Number(obstacle.y) + Number(obstacle.h) + 2 > roomHeightUnits) {
+        roomHeightUnits = Number(obstacle.y) + Number(obstacle.h) + 2;
+      }
+      obstacles.push({
+        id: obstacle.id,
+        x: obstacle.x,
+        y: obstacle.y,
+        w: obstacle.w,
+        h: obstacle.h,
+      });
     });
+    unit = (roomApp.clientWidth || 700) / roomWidthUnits;
+    heightUnit = (roomApp.clientHeight || 420) / roomHeightUnits;
+    rooms.push({ name: room.name, tables: tables, obstacles: obstacles });
   });
-
-  unit = (room.clientWidth || 700) / roomWidthUnits;
-  heightUnit = (room.clientHeight || 420) / roomHeightUnits;
 }
 
 /* =========================
@@ -159,14 +175,8 @@ function createTable(table) {
   el.style.width = table.w * unit + "px";
   el.style.height = table.h * heightUnit + "px";
 
-  el.dataset.id = table.id;
-  el.dataset.maxSeats = table.seats;
-  el.dataset.selectedSeats = 0;
-  el.dataset.price = table.price;
-
-  console.log(table.price);
+  el.id = table.id;
   updateTableLabel(el);
-
   el.addEventListener("click", () => activateTable(el));
 
   return el;
@@ -193,22 +203,17 @@ function createObstacle(obstacle) {
 ========================= */
 function renderCart(doesStand = false, standPrice) {
   // Get all table elements in the DOM
-  const tableEls = document.querySelectorAll(".table");
-
-  // Filter only tables with selected seats
-  let selectedTables = [...tableEls].filter(
-    (el) => Number(el.dataset.selectedSeats) > 0,
-  );
+  let selectedTables = rooms
+    .flatMap((room) => room.tables)
+    .filter((table) => Number(table.selectedSeats) > 0);
 
   // Add stand tickets to selected tables count
   if (doesStand) {
     if (Number(standTickets.value) > 0) {
       const standTable = {
-        dataset: {
-          id: "Stand Tickets",
-          price: standPrice,
-          selectedSeats: standTickets.value,
-        },
+        id: "Stand Tickets",
+        price: standPrice,
+        selectedSeats: standTickets.value,
       };
       selectedTables.push(standTable);
     }
@@ -218,6 +223,8 @@ function renderCart(doesStand = false, standPrice) {
   cartList.innerHTML = "";
 
   let cartCost = 0;
+
+  console.log("selected seats: " + selectedTables);
 
   // If nothing selected
   if (Object.keys(selectedTables).length === 0) {
@@ -234,14 +241,14 @@ function renderCart(doesStand = false, standPrice) {
   for (let table of selectedTables) {
     const li = document.createElement("li");
 
-    let price = Number(table.dataset.price);
-    let seats = Number(table.dataset.selectedSeats);
+    let price = Number(table.price);
+    let seats = Number(table.selectedSeats);
     let totalPrice = seats * price;
     cartCost += totalPrice;
 
     li.innerHTML = `
       <div class="cart-item-left">
-        <strong>Table ${table.dataset.id}</strong>
+        <strong>${table.room} ${table.id}</strong>
         <small>${seats} seat${seats === 1 ? "" : "s"} × ${price.toFixed(2)}</small>
       </div>
       <div class="cart-item-right">
@@ -265,7 +272,7 @@ function activateTable(el) {
   // If clicked table is already active, deactivate it
   if (activeTableEl === el) {
     el.classList.remove("selected");
-    el.dataset.selectedSeats = 0;
+    getTable(el.id).selectedSeats = 0;
     updateTableLabel(el);
     activeTableEl = null;
     amountInput.value = 1;
@@ -277,16 +284,17 @@ function activateTable(el) {
     activeTableEl.classList.remove("selected");
   }
 
+  let thisTable = getTable(el.id);
   // Check if max seats reached
   if (
     getTotalSelectedSeats() >= MAX_TOTAL_SEATS &&
-    Number(el.dataset.selectedSeats) === 0
+    thisTable.selectedSeats === 0
   ) {
     alert(`You can select a maximum of ${MAX_TOTAL_SEATS} seats.`);
     return;
   }
 
-  if (el.dataset.maxSeats === "0") {
+  if (thisTable.seats == 0) {
     alert("This table is fully booked.");
     return;
   }
@@ -295,8 +303,8 @@ function activateTable(el) {
   activeTableEl = el;
   el.classList.add("selected");
 
-  if (el.dataset.selectedSeats === "0") {
-    el.dataset.selectedSeats = 1;
+  if (thisTable.selectedSeats == 0) {
+    getTable(el.id).selectedSeats = 1;
     updateTableLabel(el);
   }
 
@@ -308,14 +316,15 @@ function updateCounts() {
     sliderGroup.style.display = "none";
   } else {
     sliderGroup.style.display = "flex";
+    let current_table = getTable(activeTableEl.id);
     const remainingSeats =
       MAX_TOTAL_SEATS -
       getTotalSelectedSeats() +
-      Number(activeTableEl.dataset.selectedSeats);
+      Number(current_table.selectedSeats);
     amountInput.min = 1;
-    amountInput.max = Math.min(activeTableEl.dataset.maxSeats, remainingSeats);
+    amountInput.max = Math.min(current_table.seats, remainingSeats);
     amountDisplayMax.textContent = Math.min(
-      activeTableEl.dataset.maxSeats,
+      current_table.seats,
       remainingSeats,
     );
   }
@@ -327,6 +336,12 @@ function updateCounts() {
     remainingSeatsStand < amountInputStand.value
       ? remainingSeatsStand
       : amountInputStand.value;
+
+  console.log(
+    MAX_TOTAL_SEATS,
+    getTotalSelectedSeats(),
+    Number(amountInputStand.value),
+  );
 }
 
 /* =========================
@@ -336,7 +351,9 @@ amountInput.addEventListener("input", () => {
   amountDisplay.textContent = amountInput.value || 1;
   if (!activeTableEl) return;
 
-  const current = Number(activeTableEl.dataset.selectedSeats);
+  let current_table = getTable(activeTableEl.id);
+
+  const current = Number(current_table.selectedSeats);
   const next = Number(amountInput.value);
   const totalWithoutCurrent = getTotalSelectedSeats() - current;
 
@@ -346,7 +363,7 @@ amountInput.addEventListener("input", () => {
     return;
   }
 
-  activeTableEl.dataset.selectedSeats = next;
+  current_table.selectedSeats = next;
   updateTableLabel(activeTableEl);
 });
 
@@ -379,6 +396,11 @@ function showNotificationCard(title, message, type = "success") {
   card.className = `notification-card show ${type}`;
   titleEl.textContent = title;
   messageEl.innerHTML = message;
+
+  if (type != "success") {
+    const pay = document.getElementById("pay");
+    pay.style.display = "none";
+  }
 }
 
 closePopUp.addEventListener("click", () => {
@@ -398,9 +420,12 @@ payBtn.addEventListener("click", () => {
    Confirm
 ========================= */
 confirmBtn.addEventListener("click", async () => {
-  const selectedTables = [...document.querySelectorAll(".table")].filter(
-    (el) => Number(el.dataset.selectedSeats) > 0,
-  );
+  let selectedTables = [];
+  rooms.forEach((room) => {
+    selectedTables.concat(
+      [...room.tables].filter((table) => Number(table.selectedSeats) > 0),
+    );
+  });
 
   const totalSeats = getTotalSelectedSeats();
 
@@ -421,13 +446,19 @@ confirmBtn.addEventListener("click", async () => {
     return;
   }
 
-  const seats = {};
-  for (const el of selectedTables) {
-    seats[el.dataset.id] = Number(el.dataset.selectedSeats);
-    el.dataset.selectedSeats = 0;
-    el.classList.remove("selected");
-    el.classList.remove("checked");
-  }
+  let errorMessage = "";
+  let seats = [];
+  rooms.forEach((room) => {
+    room.tables.forEach((table) => {
+      if (Number(table.selectedSeats) > 0) {
+        seats.push([
+          String(room.name),
+          String(table.id),
+          Number(table.selectedSeats),
+        ]);
+      }
+    });
+  });
 
   const orderID = await fetch(
     `http://localhost:6870/public/${params.get("id")}/reserve_seats`,
@@ -438,8 +469,9 @@ confirmBtn.addEventListener("click", async () => {
         Accept: "application/json",
       },
       body: JSON.stringify({
+        seats: seats,
+        to_stand: parseInt(amountInputStand.value) ?? 0,
         email: email,
-        ...seats,
       }),
     },
   )
@@ -447,46 +479,95 @@ confirmBtn.addEventListener("click", async () => {
       switch (response.status) {
         case 200:
           console.log("Success!");
+
+          document.querySelectorAll(".table").forEach((el) => {
+            el.classList.remove("selected", "checked");
+          });
+
           return response.text(); // or .text(), depending on your response type
         case 400:
           console.error("Bad request: Table not found");
+          console.log(response);
+          errorMessage = "error 400: This seat is already occupied";
           break;
         case 500:
           console.error("Internal server error");
+          console.log(response);
+          errorMessage = "error 500: internal server error";
           break;
         default:
+          console.log(response);
           console.warn("Unexpected status:", response.status);
+          errorMessage = response.status + "unexpected error occured";
       }
     })
     .catch((error) => {
       console.error("Network or fetch error:", error);
     });
 
-  const order = { id: orderID };
-  localStorage.setItem("order", JSON.stringify(order));
-  showNotificationCard(
-    "Success",
-    "Your order ID: <strong>" + orderID + "</strong>",
-    "success",
-  );
-
-  await init_tables();
-  tables.forEach((table) => {
-    room.appendChild(createTable(table));
-  });
+  if (orderID != null) {
+    const order = { id: orderID };
+    localStorage.setItem("order", JSON.stringify(order));
+    showNotificationCard(
+      "Success",
+      "Your order ID: <strong>" + orderID + "</strong>",
+      "success",
+    );
+    roomApp.innerHTML = "";
+    rooms = [];
+    await init();
+  } else {
+    showNotificationCard(
+      "Failure",
+      "Your order couldn't be processed:" + errorMessage,
+      "error",
+    );
+  }
 });
 
+function renderTables(roomName) {
+  roomApp.innerHTML = "";
+
+  rooms[activeRoom].tables.forEach((table) => {
+    roomApp.appendChild(createTable(table));
+  });
+
+  rooms[activeRoom].obstacles.forEach((obstacle) => {
+    roomApp.appendChild(createObstacle(obstacle));
+  });
+
+  updateCounts();
+}
+
+function getTable(tableId) {
+  return rooms[activeRoom].tables.find((table) => table.id == tableId);
+}
+
+async function init() {
+  await init_tables();
+  console.log("activeRoom:" + activeRoom);
+  renderTables(activeRoom);
+  roomPicker.addEventListener("change", (event) => {
+    activeRoom = rooms.findIndex((room) => room.name == event.target.value);
+
+    rooms.forEach((room) => {
+      console.log(room.name);
+    });
+
+    console.log("activeRoom is:", activeRoom);
+    renderTables(activeRoom);
+  });
+}
+
+function reloadDisplay() {
+  let displayedTables = document.querySelector(".table");
+  displayedTables.forEach((table) => {
+    table.classList.remove("selected");
+    table.classList.remove("checked");
+  });
+}
 /* =========================
    Init
 ========================= */
-await init_tables();
 
-tables.forEach((table) => {
-  room.appendChild(createTable(table));
-});
-
-obstacles.forEach((obstacle) => {
-  room.appendChild(createObstacle(obstacle));
-});
-
-updateCounts();
+await init();

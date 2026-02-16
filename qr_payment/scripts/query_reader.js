@@ -19,6 +19,7 @@ async function fetchPrice(order_id, event_id) {
       },
     );
 
+    console.log(order_id);
     if (response.status === 200) {
       const text = await response.text();
       console.log("Fetched price:", text);

@@ -2,7 +2,8 @@ export const EntryType = Object.freeze({
   DATE: "DATE",
   TEXT: "TEXT",
   PICKER: "PICKER",
-  BUTTON: "BUTTON"
+  BUTTON: "BUTTON",
+  NUMBER: "NUMBER",
 });
 
 export function showYeller({ reassure_text = "some text", onResponse }) {
@@ -62,7 +63,6 @@ function createOverlay() {
   overlay.className = "overlay";
   return overlay;
 }
-
 
 export function showMailChanger({ titleName, contents, onConfirm, onCancel }) {
   const root = document.getElementById("mail-root");
@@ -137,11 +137,23 @@ export function showMailChanger({ titleName, contents, onConfirm, onCancel }) {
         break;
       }
 
+      case EntryType.NUMBER: {
+        const [name, labelText, defaultValue] = data;
+        input = document.createElement("input");
+        input.type = "number";
+        input.name = name;
+        input.placeholder = labelText;
+        input.value = defaultValue ?? "";
+        break;
+      }
+
       case EntryType.BUTTON: {
         const [name, text, onClick] = data;
 
         if (typeof onClick !== "function") {
-          throw new Error("EntryType.BUTTON expects a function as second tuple element.");
+          throw new Error(
+            "EntryType.BUTTON expects a function as second tuple element.",
+          );
         }
 
         input = document.createElement("button");
@@ -151,7 +163,6 @@ export function showMailChanger({ titleName, contents, onConfirm, onCancel }) {
         input.addEventListener("click", onClick);
         break;
       }
-
 
       default:
         continue;
@@ -164,15 +175,13 @@ export function showMailChanger({ titleName, contents, onConfirm, onCancel }) {
     fieldBox.appendChild(fieldRow);
   }
 
-
-
   const buttons = document.createElement("div");
   buttons.className = "buttons";
 
   const confirm = document.createElement("button");
   confirm.textContent = "Confirm";
   confirm.onclick = () => {
-    const values = inputs.map(i => i.value);
+    const values = inputs.map((i) => i.value);
     onConfirm?.(values);
     cleanup();
   };
@@ -199,6 +208,3 @@ export function showMailChanger({ titleName, contents, onConfirm, onCancel }) {
     root.style.display = "none";
   }
 }
-
-
-

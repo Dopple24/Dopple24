@@ -1,87 +1,88 @@
 .table {
-display: flex;
-flex-direction: column;
-height: 100%;
-outline: none;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    outline: none;
 }
 
 .header {
-display: flex;
-height: 40px;
-background: var(--primary-background);
+    display: flex;
+    height: 40px;
+    background: var(--primary-background);
     padding-right: 15px;
+    padding-left: 33px;
 }
 
 .header-cell {
-  height: 40px;
-flex: 1;
-display: flex;
-align-items: center;
-justify-content: center;
-color: var(--primary-text);
-white-space: nowrap;
+    height: 40px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-text);
+    white-space: nowrap;
 }
 
 .separator {
-height: 3px;
-background: var(--tertiary-background);
+    height: 3px;
+    background: var(--tertiary-background);
 }
 
 .scroll {
-  overflow-y: auto;
-  scrollbar-color: var(--secondary-background) var(--primary-background);     /* Firefox thumb color + track */
+    overflow-y: auto;
+    scrollbar-color: var(--secondary-background) var(--primary-background); /* Firefox thumb color + track */
 }
 
 .scroll::-webkit-scrollbar {
-  width: 15px;
+    width: 15px;
 }
 
 .scroll::-webkit-scrollbar-thumb {
-  background-color: var(--secondary-background);
-  border-radius: 5px;
+    background-color: var(--secondary-background);
+    border-radius: 5px;
 }
 
 .scroll::-webkit-scrollbar-track {
-  background-color: var(--primary-background);
+    background-color: var(--primary-background);
 }
 
 .row {
-  height: 40px; /* default, or use JS rowHeight */
-  line-height: 40px;    
-  display: flex;
+    height: 40px; /* default, or use JS rowHeight */
+    line-height: 40px;
+    display: flex;
 }
 
 .row.even {
-  background-color: var(--secondary-background);
+    background-color: var(--secondary-background);
 }
 
 .row.odd {
-  background-color: var(--tertiary-background);
+    background-color: var(--tertiary-background);
 }
 
 .row.selected {
-  background-color: var(--quartiary-background); /* clickedColor */
+    background-color: var(--quartiary-background); /* clickedColor */
 }
 
 .cell {
-height: 40px;
-flex: 1;
-display: flex;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-color: var(--contrast-text);
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
+    height: 40px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--contrast-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .cell.selected {
-background: var(--quartiary-background);
+    background: var(--quartiary-background);
 }
 
-@media (max-width:480px)  {
-  .header {
+@media (max-width: 480px) {
+    .header {
         padding-right: 0;
     }
 }

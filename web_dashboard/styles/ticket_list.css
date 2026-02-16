@@ -6,8 +6,8 @@
 }
 
 .rightRow {
-    padding: 0px 10px;  
-    display: flex; 
+    padding: 0px 10px;
+    display: flex;
     justify-content: space-between;
 }
 
@@ -86,8 +86,35 @@ button:disabled {
     cursor: default;
 }
 
-@media (max-width:480px)  {
-    
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.copy-btn {
+    min-width: 15px;
+    height: 100%;
+    background-color: var(--secondary-background);
+    color: var(--primary-text);
+}
+
+@media (max-width: 480px) {
     .leftbar .leave-button {
         width: 15vw;
         height: 6vh;
@@ -99,12 +126,12 @@ button:disabled {
         background-position: center;
         background-size: contain;
     }
-    
+
     .leftbar .refresh-button {
         width: 15vw;
         height: 6vh;
     }
-    
+
     .rightbar img {
         display: None;
     }
@@ -136,7 +163,7 @@ button:disabled {
     .main-content {
         height: 60vh;
     }
-    
+
     .table {
         height: 100%;
     }
@@ -163,6 +190,4 @@ button:disabled {
         align-content: center;
         align-items: center;
     }
-    
-    
 }
